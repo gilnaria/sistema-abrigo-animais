@@ -1,4 +1,4 @@
-package model.acesso;
+package model;
 
 public class Veterinario extends Usuario{
     public Veterinario(String nome, String cpf, String email, String senha){

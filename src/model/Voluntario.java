@@ -1,4 +1,4 @@
-package model.acesso;
+package model;
 
 public class Voluntario extends Usuario{
     public Voluntario(String nome, String cpf, String email, String senha){
