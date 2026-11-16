@@ -3,14 +3,17 @@ import model.Animal;
 
 public abstract class RegistroMedico {
     private Animal animal;
+    // Significa que cada animal tem um registro 
     private String dataRegistroMedico;
     private String veterinario;
+    private String descricao;
 
-    public RegistroMedico(Animal animal, String dataRegistroMedico, String veterinario) {
+    public RegistroMedico(Animal animal, String dataRegistroMedico, String veterinario, String descricao) {
     
-    super(animal);
+    this.animal = animal;
     this.dataRegistroMedico = dataRegistroMedico;
     this.veterinario = veterinario;
+    this.descricao = descricao;
 
     }
 
@@ -26,6 +29,9 @@ public abstract class RegistroMedico {
         return veterinario;
     }
 
+    public String getDescricao(){
+        return descricao;
+    }
    
 }
 
