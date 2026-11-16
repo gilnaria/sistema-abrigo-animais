@@ -1,14 +1,15 @@
 package model.saude;
 import model.Animal;
+import java.time.LocalDate;
 
 public abstract class RegistroMedico {
     private Animal animal;
     // Significa que cada animal tem um registro 
-    private String dataRegistroMedico;
+    private LocalDate dataRegistroMedico;
     private String veterinario;
     private String descricao;
 
-    public RegistroMedico(Animal animal, String dataRegistroMedico, String veterinario, String descricao) {
+    public RegistroMedico(Animal animal, LocalDate dataRegistroMedico, String veterinario, String descricao) {
     
     this.animal = animal;
     this.dataRegistroMedico = dataRegistroMedico;
@@ -21,7 +22,7 @@ public abstract class RegistroMedico {
         return animal;
     }
 
-    public String getDataRegistroMedico(){
+    public LocalDate getDataRegistroMedico(){
         return dataRegistroMedico;
     }
 
