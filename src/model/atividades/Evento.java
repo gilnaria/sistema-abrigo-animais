@@ -1,5 +1,5 @@
 package model.atividades;
-import model.atividades.TipoAtividade;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -9,17 +9,17 @@ public class Evento {
     private String local;
     private LocalDate dataEvento;
     private LocalTime horarioEvento;
-    private int numVoluntarios;
+    private int vagas;
     
     public Evento(String nomeEvento, TipoAtividade tipo, String local, LocalDate dataEvento,
-        LocalTime horarioEvento, int numVoluntarios){
+        LocalTime horarioEvento, int vagas){
 
             this.nomeEvento = nomeEvento;
             this.tipo = tipo;
             this.local = local;
             this.dataEvento = dataEvento;
             this.horarioEvento = horarioEvento;
-            this.numVoluntarios = numVoluntarios;
+            this.vagas = vagas;
 
     }
 
@@ -43,8 +43,8 @@ public class Evento {
         return horarioEvento;
     }
 
-    public int getNumVoluntarios(){
-        return numVoluntarios;
+    public int getVagas(){
+        return vagas;
     }
 
 public void setNomeEvento(String nomeEvento) {
@@ -67,9 +67,16 @@ public void setHorarioEvento(LocalTime horarioEvento) {
     this.horarioEvento = horarioEvento;
 }
 
-public void setNumVoluntarios(int numVoluntarios) {
-    this.numVoluntarios = numVoluntarios;
+public void setVagas(int vagas) {
+    this.vagas = vagas;
 }
 
+public void exibirInfo(){
+    System.out.println("Nome: ");
+    System.out.println("Tipo de atividade: " + tipo);
+    System.out.println("Local: " + local);
+    System.out.println("Data: " + dataEvento + "| Horário: " + horarioEvento);
+    System.out.println("Vagas: " + vagas);
+}
 
 }
