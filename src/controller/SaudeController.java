@@ -36,6 +36,4 @@ public class SaudeController {
         return repositorio.listarHistoricos();
     }
 
-
-
 }

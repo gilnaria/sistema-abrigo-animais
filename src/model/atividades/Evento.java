@@ -1,6 +1,7 @@
 package model.atividades;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.LocalTime;
 
 public class Evento {
@@ -72,10 +73,11 @@ public void setVagas(int vagas) {
 }
 
 public void exibirInfo(){
-    System.out.println("Nome: ");
+    System.out.println("Nome: " + nomeEvento);
     System.out.println("Tipo de atividade: " + tipo);
     System.out.println("Local: " + local);
-    System.out.println("Data: " + dataEvento + "| Horário: " + horarioEvento);
+    System.out.println("Data: " + dataEvento.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+    System.out.println("Horário: " + horarioEvento);
     System.out.println("Vagas: " + vagas);
 }
 
