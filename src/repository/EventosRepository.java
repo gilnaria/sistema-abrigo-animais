@@ -12,7 +12,7 @@ public class EventosRepository {
         eventos.add(evento);
     }
     
-    public List<Evento> todosEventos() {
+    public List<Evento> listarEventos() {
         return eventos;
     }
 

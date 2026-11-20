@@ -18,7 +18,7 @@ public class EventosController {
     }
 
     public List<Evento> listarEventos() {
-        return repositorio.todosEventos();
+        return repositorio.listarEventos();
     }
 
     public void remover(Evento evento) {
