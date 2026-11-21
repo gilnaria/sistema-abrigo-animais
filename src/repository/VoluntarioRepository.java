@@ -2,7 +2,7 @@ package repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import model.Voluntario;
+import model.acesso.Voluntario;
 
 
 public class VoluntarioRepository {

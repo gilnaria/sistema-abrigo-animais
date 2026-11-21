@@ -2,7 +2,7 @@ package controller;
 
 import model.atividades.Evento;
 import model.atividades.Inscricao;
-import model.Voluntario;
+import model.acesso.Voluntario;
 import repository.InscricaoRepository;
 import java.time.LocalDate;
 

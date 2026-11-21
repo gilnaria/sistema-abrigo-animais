@@ -1,4 +1,4 @@
-package model;
+package model.acesso;
 
 import java.time.LocalDate;
 
@@ -10,12 +10,19 @@ public abstract class Usuario {
     private final LocalDate dataCadastro;
 
     //fazer verificação com exception depois
+    
     public Usuario(String nome, String cpf, String email, String senha){
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;
         this.senha = senha;
         this.dataCadastro = LocalDate.now();
+    }
+
+    //verificação da senha aqui pra manter a segurança da senha do usuario
+
+    public boolean verificarSenha(String senha){
+        return this.senha.equals(senha);
     }
 
     public String getNome(){
