@@ -1,5 +1,5 @@
 package model.atividades;
-import model.Voluntario;
+import model.acesso.Voluntario;
 import java.time.LocalDate;
 
 public class Inscricao {

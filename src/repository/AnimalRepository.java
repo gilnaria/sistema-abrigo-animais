@@ -70,22 +70,22 @@ public class AnimalRepository {
         return resultado;
     }
 
-    public List<Animal> buscarPorPorte(String porte){
+    public List<Animal> buscarPorPorte(Animal.Porte porte){
         List<Animal> resultado = new ArrayList<>();
 
         for(Animal animal : animais){
-            if(animal.getPorte().equalsIgnoreCase(porte)){
+            if(animal.getPorte() == porte){
                 resultado.add(animal);
             }
         }
         return resultado;
     }
 
-    public List<Animal> buscarPorStatusAdocao(String statusAdocao){
+    public List<Animal> buscarPorStatusAdocao(Animal.StatusAdocao statusAdocao){
         List<Animal> resultado = new ArrayList<>();
 
         for(Animal animal : animais){
-            if(animal.getStatusAdocao().equalsIgnoreCase(statusAdocao)){
+            if(animal.getStatusAdocao() == statusAdocao){
                 resultado.add(animal);
             }
         }
@@ -112,7 +112,7 @@ public class AnimalRepository {
         return false;
     }
 
-    public boolean editarPorteAnimal(Animal animal, String novoPorte){
+    public boolean editarPorteAnimal(Animal animal, Animal.Porte novoPorte){
         if(animais.contains(animal)){
             animal.setPorte(novoPorte);
             return true;
@@ -128,7 +128,7 @@ public class AnimalRepository {
         return false;
     }
 
-    public boolean editarStatusAdocaoAnimal(Animal animal, String novoStatusAdocao){
+    public boolean editarStatusAdocaoAnimal(Animal animal, Animal.StatusAdocao novoStatusAdocao){
         if(animais.contains(animal)){
             animal.setStatusAdocao(novoStatusAdocao);
             return true;

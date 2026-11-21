@@ -15,16 +15,25 @@ public class AnimalService {
         if (animal == null) {
             throw new IllegalArgumentException("Animal não pode ser nulo.");
         }
-        if(animal.getNome().isEmpty()){
+        if(animal.getNome() == null || animal.getNome().isBlank()){
             //throw new DadoInvalidoException();
         }
         if(animal.getIdade() < 0){
             //throw new DadoInvalidoException();
         }
-        if(animal.getRaca().isEmpty() || animal.getEspecie().isEmpty() || animal.getPorte().isEmpty()){
+        if(animal.getRaca() == null || animal.getRaca().isBlank()){
             //throw new DadoInvalidoException();
         }
-        if(animal.getEstadoSaude().isEmpty() || animal.getStatusAdocao().isEmpty()){
+        if(animal.getEspecie() == null || animal.getEspecie().isBlank()){
+
+        }
+        if(animal.getPorte() == null){
+            //throw new DadoInvalidoException();
+        }
+        if(animal.getEstadoSaude() == null || animal.getEstadoSaude().isBlank()){
+            //throw new DadoInvalidoException();
+        }
+        if(animal.getStatusAdocao() == null){
             //throw new DadoInvalidoException();
         }
 
@@ -67,16 +76,16 @@ public class AnimalService {
         return animalRepository.buscarPorIdade(idade);
     }
 
-    public List<Animal> buscarPorPorte(String porte){
-        if (porte == null || porte.isBlank()) {
+    public List<Animal> buscarPorPorte(Animal.Porte porte){
+        if (porte == null) {
             // throw new DadoInvalidoException();
         }
 
         return animalRepository.buscarPorPorte(porte);
     }
 
-    public List<Animal> buscarPorStatusAdocao(String statusAdocao){
-        if (statusAdocao == null || statusAdocao.isBlank()) {
+    public List<Animal> buscarPorStatusAdocao(Animal.StatusAdocao statusAdocao){
+        if (statusAdocao == null) {
             // throw new DadoInvalidoException();
         }
 

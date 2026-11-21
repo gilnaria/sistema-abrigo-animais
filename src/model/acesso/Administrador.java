@@ -1,4 +1,4 @@
-package model;
+package model.acesso;
 
 public class Administrador extends Usuario {
     public Administrador(String nome, String cpf, String email, String senha){
