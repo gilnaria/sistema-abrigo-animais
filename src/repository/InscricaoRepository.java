@@ -10,7 +10,7 @@ import model.atividades.Inscricao;
 public class InscricaoRepository {
     private final List<Inscricao> inscricoes = new ArrayList<>();
 
-    public List<Inscricao> TodasInscricoes(){
+    public List<Inscricao> listarInscricoes(){
         return inscricoes;
     }
 

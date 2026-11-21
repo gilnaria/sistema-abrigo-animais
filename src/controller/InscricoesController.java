@@ -6,6 +6,9 @@ import model.Voluntario;
 import repository.InscricaoRepository;
 import java.time.LocalDate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class InscricoesController {
     private InscricaoRepository repositorio;
 
@@ -13,18 +16,30 @@ public class InscricoesController {
         this.repositorio = repositorio;
     }
 
-    public void realizarInscricao(Voluntario voluntario, Evento evento){
-        int quantidade = repositorio.contarInscricoes(evento);
+    public boolean realizarInscricao(Voluntario voluntario, Evento evento) {
+    int quantidade = repositorio.contarInscricoes(evento);
 
-        if(quantidade < evento.getVagas()){
-            Inscricao inscricao = new Inscricao(voluntario, evento, LocalDate.now()); 
-        
-            repositorio.adicionarInscricao(inscricao);
-        }
-        else{
-            System.out.println("Não há mais vagas disponíveis.");
-        }
+    if (quantidade < evento.getVagas()) {
+        Inscricao inscricao = new Inscricao(voluntario, evento, LocalDate.now());
 
+        repositorio.adicionarInscricao(inscricao);
+        return true;
+    } else {
+        System.out.println("Não há mais vagas disponíveis.");
+        return false;
+     }
+    }
+    
+    public List<Inscricao> listarHistorico(Voluntario voluntario) {
+    List<Inscricao> historico = new ArrayList<>();
+
+    for (Inscricao inscricao : repositorio.listarInscricoes()) {
+        if (inscricao.getVoluntario().equals(voluntario)) {
+            historico.add(inscricao);
+        }
+    }
+
+    return historico;
     }
 
     public void cancelarInscricao(Inscricao inscricao){

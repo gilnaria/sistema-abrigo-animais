@@ -13,7 +13,7 @@ public class TesteCadastro {
 
         Scanner scanner = new Scanner(System.in);
 
-        CadastroEvento tela = new CadastroEvento(controller, scanner);
+        TelaCadastroEvento tela = new TelaCadastroEvento(controller, scanner);
 
         tela.exibirMenuEventos();
 

@@ -11,11 +11,11 @@ import java.util.Scanner;
 import java.util.List;
 
 
-public class CadastroEvento {
+public class TelaCadastroEvento {
     private EventosController controller;
     private Scanner scanner;
 
-    public CadastroEvento(EventosController controller, Scanner scanner){
+    public TelaCadastroEvento(EventosController controller, Scanner scanner){
         this.controller = controller;
         this.scanner = scanner;
     }
@@ -250,11 +250,12 @@ public class CadastroEvento {
 
                 }
                 System.out.println("┌──────────────────────────────────┐");
-                System.out.println("| EXIBIR MAIS DETALHES DE:         |");
+                System.out.println("|           VER DETALHES:          |");
                 System.out.println("└──────────────────────────────────┘");
                 System.out.print("|> ");
                 int escolha = scanner.nextInt();
                 scanner.nextLine();
+                
                 if(escolha >= 1 && escolha <= eventos.size()){
                     eventos.get(escolha - 1).exibirInfo();
                 }
