@@ -10,6 +10,9 @@ import java.time.LocalTime;
 import java.util.Scanner;
 import java.util.List;
 
+import exception.atividades.DadoInvalidoException;
+import exception.atividades.EventoNaoEncontradoException;
+
 
 public class TelaCadastroEvento {
     private EventosController controller;
@@ -122,15 +125,21 @@ public class TelaCadastroEvento {
 
                     switch(opcaoConfirmacao){
                         case 1:
-                            Evento novoEvento = new Evento(nome, tipo, local, data, horario, vagas);
+                            try{    
+                                Evento novoEvento = new Evento(nome, tipo, local, data, horario, vagas);
 
-                            controller.cadastrarEvento(novoEvento);
+                                controller.cadastrarEvento(novoEvento);
 
-                            System.out.println("┌────────────────────────────────────────────────────────────┐");
-                            System.out.println("|                 EVENTO CADASTRADO COM SUCESSO!             |");
-                            System.out.println("└────────────────────────────────────────────────────────────┘");
-                            confirmar = true;
-                            break;
+                                System.out.println("┌────────────────────────────────────────────────────────────┐");
+                                System.out.println("|                 EVENTO CADASTRADO COM SUCESSO!             |");
+                                System.out.println("└────────────────────────────────────────────────────────────┘");
+                                confirmar = true;
+                            
+                            }catch(DadoInvalidoException erro){
+                                System.out.println(erro.getMessage());
+                            }
+                            
+                                break;
 
                         case 2:
 
@@ -293,10 +302,15 @@ public class TelaCadastroEvento {
             scanner.nextLine();
 
             if(numero >= 1 && numero <= eventos.size()){
-                controller.remover(eventos.get(numero-1));
-                System.out.println("┌────────────────────────────────────────────────────────┐");
-                System.out.println("|               EVENTO REMOVIDO COM SUCESSO!             |");
-                System.out.println("└────────────────────────────────────────────────────────┘");
+                try{
+                    controller.remover(eventos.get(numero-1));
+                    System.out.println("┌────────────────────────────────────────────────────────┐");
+                    System.out.println("|               EVENTO REMOVIDO COM SUCESSO!             |");
+                    System.out.println("└────────────────────────────────────────────────────────┘");
+                
+                }catch(EventoNaoEncontradoException erro){
+                    System.out.println(erro.getMessage());
+                }    
             }
             else{
                 System.out.println("┌───────────────────────────────────────────┐");

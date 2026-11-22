@@ -1,4 +1,4 @@
-package exception;
+package exception.saude;
 
 public class VacinaDuplicadaException extends Exception {
 
