@@ -3,18 +3,16 @@ package view.atividades;
 import model.atividades.Evento;
 import model.atividades.TipoAtividade;
 import controller.EventosController;
+import exception.atividades.DadoInvalidoException;
+import exception.atividades.EventoNaoEncontradoException;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.time.LocalTime;
 import java.util.Scanner;
 import java.util.List;
-
-import exception.atividades.DadoInvalidoException;
-import exception.atividades.EventoNaoEncontradoException;
-import java.time.format.DateTimeParseException;
-import java.time.format.ResolverStyle;
-
 
 public class TelaCadastroEvento {
     private EventosController controller;

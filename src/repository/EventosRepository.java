@@ -13,7 +13,7 @@ public class EventosRepository {
     }
     
     public List<Evento> listarEventos() {
-        return eventos;
+        return new ArrayList<Evento>(eventos);
     }
 
     public void removerEventos(Evento evento) {

@@ -5,13 +5,14 @@ import model.atividades.Evento;
 import model.atividades.Inscricao;
 import controller.EventosController;
 import controller.InscricoesController;
-
+import exception.atividades.InscricaoDuplicadaException;
+import exception.atividades.InscricaoNaoEncontradaException;
+import exception.atividades.VagasEsgotadasException;
+import exception.atividades.EventoEncerradoException;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
-
-
 
 public class TelaInscricao {
     private EventosController controllerEvento;
@@ -109,17 +110,14 @@ public class TelaInscricao {
 
                         switch(op2){
                             case 1:
-                                boolean verificacao = controllerInscricao.realizarInscricao(voluntario, eventoEscolhido);
+                                try{
+                                    controllerInscricao.realizarInscricao(voluntario, eventoEscolhido);
 
-                                if(verificacao){
-                                System.out.println("┌────────────────────────────────────────────────────────────┐");
-                                System.out.println("|               INSCRIÇÃO EFETUADA COM SUCESSO!              |");
-                                System.out.println("└────────────────────────────────────────────────────────────┘");
-                                }
-                                else{
                                     System.out.println("┌────────────────────────────────────────────────────────────┐");
-                                    System.out.println("|                      INSCRIÇÃO INVÁLIDA.                   |");
+                                    System.out.println("|               INSCRIÇÃO EFETUADA COM SUCESSO!              |");
                                     System.out.println("└────────────────────────────────────────────────────────────┘");
+                                }catch(InscricaoDuplicadaException | EventoEncerradoException | VagasEsgotadasException erro){
+                                    System.out.println(erro.getMessage());
                                 }
 
                             break;    
@@ -151,29 +149,24 @@ public class TelaInscricao {
                    scanner.nextLine();
 
                    if(numInscricao >= 1 && numInscricao <= eventos.size()){
-                    
                     Evento eventoEscolhido = eventos.get(numInscricao - 1);
+                    
+                    try{
+                        controllerInscricao.realizarInscricao(voluntario, eventoEscolhido);
 
-                    boolean verificacao = controllerInscricao.realizarInscricao(voluntario, eventoEscolhido);
-
-                    if(verificacao){
-                    System.out.println("┌────────────────────────────────────────────────────────────┐");
-                    System.out.println("|               INSCRIÇÃO EFETUADA COM SUCESSO!              |");
-                    System.out.println("└────────────────────────────────────────────────────────────┘");
-                    }
-                    else{
                         System.out.println("┌────────────────────────────────────────────────────────────┐");
-                        System.out.println("|                      INSCRIÇÃO INVÁLIDA.                   |");
+                        System.out.println("|               INSCRIÇÃO EFETUADA COM SUCESSO!              |");
                         System.out.println("└────────────────────────────────────────────────────────────┘");
+                    }catch(InscricaoDuplicadaException | EventoEncerradoException | VagasEsgotadasException erro){
+                        System.out.println(erro.getMessage());
                     }
-
-                    }
-                    else{
+                }
+                else{
                     System.out.println("┌──────────────────────────────────────────────┐");
                     System.out.println("|                EVENTO INVÁLIDO.              |");
                     System.out.println("└──────────────────────────────────────────────┘");
                 }
-
+                    
                 break;
 
                 case 3:
@@ -256,12 +249,17 @@ public class TelaInscricao {
             if(numInscricao >= 1 && numInscricao <= historico.size()){
                 
                 Inscricao inscricaoCancelada = historico.get(numInscricao - 1);
-
+                
+                try{
                 controllerInscricao.cancelarInscricao(inscricaoCancelada);
  
                 System.out.println("┌────────────────────────────────────────────────────────────┐");
                 System.out.println("|               INSCRIÇÃO CANCELADA COM SUCESSO!             |");
                 System.out.println("└────────────────────────────────────────────────────────────┘");
+            
+            }catch(InscricaoNaoEncontradaException erro){
+                System.out.println(erro.getMessage());
+            }
             
             }
             else{
@@ -272,4 +270,3 @@ public class TelaInscricao {
             }
         }    
     } 
-    

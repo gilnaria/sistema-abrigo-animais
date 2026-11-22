@@ -2,7 +2,6 @@ package controller;
 
 import model.atividades.Evento;
 import repository.EventosRepository;
-
 import exception.atividades.DadoInvalidoException;
 import exception.atividades.EventoNaoEncontradoException;
 

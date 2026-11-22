@@ -5,8 +5,12 @@ import model.atividades.Inscricao;
 import model.acesso.Voluntario;
 import repository.InscricaoRepository;
 import repository.EventosRepository;
-import java.time.LocalDate;
+import exception.atividades.InscricaoDuplicadaException;
+import exception.atividades.VagasEsgotadasException;
+import exception.atividades.EventoEncerradoException;
+import exception.atividades.InscricaoNaoEncontradaException;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,20 +27,23 @@ public class InscricoesController {
     return evento.getVagas() - repositorio.contarInscricoes(evento);
     }
 
-    public boolean realizarInscricao(Voluntario voluntario, Evento evento) {
-    int quantidade = repositorio.contarInscricoes(evento);
+    public void realizarInscricao(Voluntario voluntario, Evento evento)
+        throws InscricaoDuplicadaException, EventoEncerradoException, VagasEsgotadasException {
 
-    if (quantidade < evento.getVagas()) {
-        Inscricao inscricao = new Inscricao(voluntario, evento, LocalDate.now());
-
-        repositorio.adicionarInscricao(inscricao);
-        return true;
-    } else {
-        System.out.println("Não há mais vagas disponíveis.");
-        // lancar uma excecao
-        return false;
-     }
+    if(evento.getDataEvento().isBefore(LocalDate.now())){
+        throw new EventoEncerradoException("[ ESTE EVENTO JÁ ACONTECEU. ]");
     }
+
+    if(repositorio.existeInscricao(voluntario, evento)){
+        throw new InscricaoDuplicadaException("[ VOCÊ JÁ ESTÁ INSCRITO NESTE EVENTO. ]");
+    }
+
+    if(repositorio.contarInscricoes(evento) >= evento.getVagas()){
+        throw new VagasEsgotadasException("[ NÃO HÁ MAIS VAGAS DISPONÍVEIS. ]");
+    }
+
+    repositorio.adicionarInscricao(new Inscricao(voluntario, evento, LocalDate.now()));
+}
     
     public List<Inscricao> listarHistorico(Voluntario voluntario) {
     List<Inscricao> historico = new ArrayList<>();
@@ -51,10 +58,11 @@ public class InscricoesController {
     return historico;
     }
 
-    public void cancelarInscricao(Inscricao inscricao){
+    public void cancelarInscricao(Inscricao inscricao) throws InscricaoNaoEncontradaException{
+        if(inscricao == null || !repositorio.listarInscricoes().contains(inscricao)){
+            throw new InscricaoNaoEncontradaException("[ INSCRIÇÃO NÃO ENCONTRADA. ]");
+        }
         repositorio.remover(inscricao);
     }
 
     }
-    
-

@@ -24,7 +24,7 @@ public class HistoricoAnimal {
     }
 
     public List<RegistroMedico> getRegistros(){
-       return registros;
+       return new ArrayList<>(registros);
     }
 // uma porta de saida da lista de registros
 
