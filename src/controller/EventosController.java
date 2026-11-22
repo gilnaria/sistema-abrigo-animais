@@ -8,7 +8,6 @@ import exception.atividades.EventoNaoEncontradoException;
 
 import java.util.List;
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 
 public class EventosController {

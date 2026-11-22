@@ -12,6 +12,8 @@ import java.util.List;
 
 import exception.atividades.DadoInvalidoException;
 import exception.atividades.EventoNaoEncontradoException;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 
 
 public class TelaCadastroEvento {
@@ -83,15 +85,30 @@ public class TelaCadastroEvento {
                 String local = scanner.nextLine();
                 
 
-                DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT);
+                System.out.println("-------------------------------------------------------------");
+                LocalDate data = null;
+                while(data == null){
+                    System.out.print("[DATA (DD/MM/AAAA)]: ");
+                    try{
+                        data = LocalDate.parse(scanner.nextLine(), formato);
+                    }catch(DateTimeParseException erro){
+                        System.out.println("[ DATA INVÁLIDA. USE O FORMATO DD/MM/AAAA. ]");
+                    }
+                }
+
                 System.out.println("-------------------------------------------------------------");
 
-                System.out.print("[DATA (DD/MM/AAAA)]: ");
-                LocalDate data = LocalDate.parse(scanner.nextLine(), formato);
-                System.out.println("-------------------------------------------------------------");
+                LocalTime horario = null;
+                while(horario == null){
+                    System.out.print("[HORÁRIO (HH:MM)]: ");
+                    try{
+                        horario = LocalTime.parse(scanner.nextLine());
+                    }catch(DateTimeParseException erro){
+                    System.out.println("[ HORÁRIO INVÁLIDO. USE O FORMATO HH:MM. ]");
+                    }
+                }
 
-                System.out.print("[HORÁRIO (HH:MM)]: ");
-                LocalTime horario = LocalTime.parse(scanner.nextLine());
                 System.out.println("-------------------------------------------------------------");
 
                 System.out.print("[VAGAS DISPONÍVEIS]: ");
@@ -189,13 +206,27 @@ public class TelaCadastroEvento {
                                     break;
 
                                 case 4:
-                                    System.out.print("[DATA (DD/MM/AAAA)]: ");
-                                    data = LocalDate.parse(scanner.nextLine(), formato);
+                                    data = null;
+                                    while(data == null){
+                                        System.out.print("[DATA (DD/MM/AAAA)]: ");
+                                        try{
+                                            data = LocalDate.parse(scanner.nextLine(), formato);
+                                        }catch(DateTimeParseException erro){
+                                            System.out.println("[ DATA INVÁLIDA. USE O FORMATO DD/MM/AAAA. ]");
+                                        }
+                                    }
                                     break;
 
                                 case 5:
-                                    System.out.print("[HORÁRIO (HH:MM)]: ");
-                                    horario = LocalTime.parse(scanner.nextLine());
+                                    horario = null;
+                                    while(horario == null){
+                                        System.out.print("[HORÁRIO (HH:MM)]: ");
+                                        try{
+                                            horario = LocalTime.parse(scanner.nextLine());
+                                        }catch(DateTimeParseException erro){
+                                            System.out.println("[ HORÁRIO INVÁLIDO. USE O FORMATO HH:MM. ]");
+                                        }
+                                    }
                                     break;
 
                                 case 6:
