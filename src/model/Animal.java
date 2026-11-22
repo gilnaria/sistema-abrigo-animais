@@ -1,6 +1,5 @@
 package model;
 
-import java.io.ObjectInputFilter.Status;
 import java.time.LocalDate;
 
 public class Animal {

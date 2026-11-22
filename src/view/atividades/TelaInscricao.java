@@ -1,6 +1,6 @@
 package view.atividades;
 
-import model.Voluntario;
+import model.acesso.Voluntario;
 import model.atividades.Evento;
 import model.atividades.Inscricao;
 import controller.EventosController;
