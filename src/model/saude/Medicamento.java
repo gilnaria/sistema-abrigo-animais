@@ -34,6 +34,7 @@ public boolean verificarHorarioMedicamento() {
     return LocalTime.now().equals(horarioMedicamento);
 }
 
+@Override
 public void exibirInfo() {
     System.out.println("Medicamento: " + nomeMedicamento);
     System.out.println("Dosagem: " + dosagem);

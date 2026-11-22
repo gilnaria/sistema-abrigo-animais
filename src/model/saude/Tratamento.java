@@ -31,8 +31,9 @@ public class Tratamento extends RegistroMedico {
 
    public void finalizarTratamento() {
     this.statusTratamento = "Concluído";
-}
+  }
   
+  @Override
   public void exibirInfo(){
     System.out.println("Data: " + getDataRegistroMedico());
     System.out.println("Veterinário: " + getVeterinario());

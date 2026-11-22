@@ -21,7 +21,8 @@ public class Consulta extends RegistroMedico {
     public String getObservacoes(){
         return observacoes;
     }
-
+    
+    @Override
     public void exibirInfo(){
         System.out.println("Data: " + getDataRegistroMedico());
         System.out.println("Veterinario: " + getVeterinario());

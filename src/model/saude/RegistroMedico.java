@@ -34,5 +34,7 @@ public abstract class RegistroMedico {
         return descricao;
     }
    
+    public abstract void exibirInfo();
+    
 }
 

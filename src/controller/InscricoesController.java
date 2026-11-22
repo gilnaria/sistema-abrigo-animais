@@ -26,6 +26,7 @@ public class InscricoesController {
         return true;
     } else {
         System.out.println("Não há mais vagas disponíveis.");
+        // lancar uma excecao
         return false;
      }
     }
