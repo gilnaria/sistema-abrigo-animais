@@ -16,6 +16,10 @@ public class InscricoesController {
         this.repositorio = repositorio;
     }
 
+    public int vagasRestantes(Evento evento) {
+    return evento.getVagas() - repositorio.contarInscricoes(evento);
+    }
+
     public boolean realizarInscricao(Voluntario voluntario, Evento evento) {
     int quantidade = repositorio.contarInscricoes(evento);
 

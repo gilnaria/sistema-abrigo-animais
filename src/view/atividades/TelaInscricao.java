@@ -69,7 +69,7 @@ public class TelaInscricao {
         for(int i = 0; i < eventos.size(); i++){
             
             System.out.printf("%-4d %-25s %-25s %5d%n", i + 1, eventos.get(i).getNomeEvento(), 
-            eventos.get(i).getTipo(), eventos.get(i).getVagas());
+            eventos.get(i).getTipo(), controllerInscricao.vagasRestantes(eventos.get(i)));
         
             System.out.println("------------------------------------------------------------");
 
