@@ -114,7 +114,7 @@ public class TelaCadastroEvento {
                     System.out.println("┌─────────────────────────────────┐");
                     System.out.println("| 1 - [ CONFIRMAR ]               |");
                     System.out.println("| 2 - [ EDITAR ]                  |");
-                    System.out.println("| 3 - [ CANCELAR CADASTRO ]       |");
+                    System.out.println("| 0 - [ CANCELAR CADASTRO ]       |");
                     System.out.println("└─────────────────────────────────┘");
                     System.out.print("|> ");
                     int opcaoConfirmacao = scanner.nextInt();
@@ -142,7 +142,7 @@ public class TelaCadastroEvento {
                             System.out.println("| 3 - [LOCAL]                          |");
                             System.out.println("| 4 - [DATA]                           |");
                             System.out.println("| 5 - [HORÁRIO]                        |");
-                            System.out.println("| 5 - [VAGAS]                          |");  
+                            System.out.println("| 6 - [VAGAS]                          |");  
                             System.out.println("└──────────────────────────────────────┘");
                             System.out.println("│ O que deseja editar?                 | ");
                             System.out.print("|>");

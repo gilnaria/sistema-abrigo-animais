@@ -48,6 +48,7 @@ public class Cirurgia extends RegistroMedico {
         this.horarioCirurgia = horarioCirurgia;
     }
 
+    @Override
     public void exibirInfo(){
  System.out.println("Cirurgia: " + nomeCirurgia);
         System.out.println("Veterinário: " + getVeterinario());

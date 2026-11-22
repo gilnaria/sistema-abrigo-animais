@@ -27,7 +27,8 @@ public class Vacina extends RegistroMedico {
     public boolean verificarProximaDose() {
         return proximaDose != null;
        }
-     
+    
+    @Override
     public void exibirInfo() {
         System.out.println("Vacina: " + nomeVacina);
         System.out.println("Data da aplicação: " + getDataRegistroMedico());
