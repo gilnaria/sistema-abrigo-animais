@@ -3,66 +3,36 @@ package controller;
 import model.atividades.Evento;
 import model.atividades.Inscricao;
 import model.acesso.Voluntario;
-import repository.InscricaoRepository;
-import repository.EventosRepository;
 import exception.atividades.InscricaoDuplicadaException;
 import exception.atividades.VagasEsgotadasException;
 import exception.atividades.EventoEncerradoException;
 import exception.atividades.InscricaoNaoEncontradaException;
+import service.InscricaoService;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
+
 import java.util.List;
 
 public class InscricoesController {
-    private InscricaoRepository repositorio;
-    private EventosRepository repositorioEvento;
+    private InscricaoService service;
 
-    public InscricoesController(InscricaoRepository repositorio, EventosRepository repositorioEvento){
-        this.repositorio = repositorio;
-        this.repositorioEvento = repositorioEvento;
+    public InscricoesController(InscricaoService service){
+        this.service = service;
     }
 
     public int vagasRestantes(Evento evento) {
-    return evento.getVagas() - repositorio.contarInscricoes(evento);
+        return service.vagasRestantes(evento);
     }
 
-    public void realizarInscricao(Voluntario voluntario, Evento evento)
-        throws InscricaoDuplicadaException, EventoEncerradoException, VagasEsgotadasException {
-
-    if(evento.getDataEvento().isBefore(LocalDate.now())){
-        throw new EventoEncerradoException("[ ESTE EVENTO JÁ ACONTECEU. ]");
+    public void realizarInscricao(Voluntario voluntario, Evento evento) throws InscricaoDuplicadaException, 
+    EventoEncerradoException, VagasEsgotadasException {
+        service.realizarInscricao(voluntario, evento);
     }
-
-    if(repositorio.existeInscricao(voluntario, evento)){
-        throw new InscricaoDuplicadaException("[ VOCÊ JÁ ESTÁ INSCRITO NESTE EVENTO. ]");
-    }
-
-    if(repositorio.contarInscricoes(evento) >= evento.getVagas()){
-        throw new VagasEsgotadasException("[ NÃO HÁ MAIS VAGAS DISPONÍVEIS. ]");
-    }
-
-    repositorio.adicionarInscricao(new Inscricao(voluntario, evento, LocalDate.now()));
-}
     
     public List<Inscricao> listarHistorico(Voluntario voluntario) {
-    List<Inscricao> historico = new ArrayList<>();
-
-    for (Inscricao inscricao : repositorio.listarInscricoes()) {
-        if (inscricao.getVoluntario().equals(voluntario)
-        && repositorioEvento.listarEventos().contains(inscricao.getEvento())) {
-    historico.add(inscricao);
-}
-    }
-
-    return historico;
+        return service.listarHistorico(voluntario);
     }
 
     public void cancelarInscricao(Inscricao inscricao) throws InscricaoNaoEncontradaException{
-        if(inscricao == null || !repositorio.listarInscricoes().contains(inscricao)){
-            throw new InscricaoNaoEncontradaException("[ INSCRIÇÃO NÃO ENCONTRADA. ]");
-        }
-        repositorio.remover(inscricao);
+        service.cancelarInscricao(inscricao);
     }
-
-    }
+}
