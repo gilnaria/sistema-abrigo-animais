@@ -1,19 +1,27 @@
 package service;
 
 import repository.UsuarioRepository;
+import service.CandidaturaService;
+import model.Candidatura;
+import model.acesso.Administrador;
 import model.acesso.Usuario;
 import java.util.List;
 
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
+    private final CandidaturaService candidaturaService;
 
-    public UsuarioService (UsuarioRepository usuarioRepository){
+    public UsuarioService (UsuarioRepository usuarioRepository, CandidaturaService candidaturaService){
         this.usuarioRepository = usuarioRepository;
+        this.candidaturaService = candidaturaService;
     }
 
     public void cadastrarUsuario(Usuario usuario){
         if(usuario == null){
             throw new IllegalArgumentException("Usuário não pode ser nulo.");
+        }
+        if(!(usuario instanceof Administrador)){
+            //Exception
         }
         if(usuario.getNome() == null || usuario.getNome().isBlank()){
             //Exception
@@ -55,6 +63,9 @@ public class UsuarioService {
         if(usuario == null){
             return false;
         }
+        if(!(usuario instanceof Administrador)){
+            //exception
+        }
 
         return usuarioRepository.removerUsuario(usuario);
     }
@@ -83,5 +94,27 @@ public class UsuarioService {
         } 
 
         return usuarioRepository.editarUsuario(usuarioAtualizado);
+    }
+
+    public void aprovarCandidatura(Usuario usuario, Candidatura candidatura){
+        if(usuario == null){
+            //exception
+        }
+        if(!(usuario instanceof Administrador)){
+            //exception
+        }
+
+        candidaturaService.aprovarCandidatura(candidatura);
+    }
+
+    public void rejeitarCandidatura(Usuario usuario, Candidatura candidatura){
+        if(usuario == null){
+            //exception
+        }
+        if(!(usuario instanceof Administrador)){
+            //exception
+        }
+
+        candidaturaService.rejeitarCandidatura(candidatura);
     }
 }

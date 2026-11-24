@@ -9,7 +9,7 @@ public class MenuPrincipal {
     private UsuarioService usuarioService;
     private Scanner scanner;
 
-    public MenuPrinicpal(UsuarioService usuarioService, Scanner scanner){
+    public MenuPrincipal(UsuarioService usuarioService, Scanner scanner){
         this.usuarioService = usuarioService;
         this.scanner = scanner;
     }

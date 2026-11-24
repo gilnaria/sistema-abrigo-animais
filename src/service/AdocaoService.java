@@ -51,6 +51,8 @@ public class AdocaoService {
         adocao.setStatusSolicitacao(StatusSolicitacao.APROVADA);
 
         animal.setStatusAdocao(Animal.StatusAdocao.ADOTADO);
+
+        adocao.setDataAdocao(LocalDate.now());
     }
 
     public void rejeitarSolicitacao(Animal animal, Usuario usuario){
