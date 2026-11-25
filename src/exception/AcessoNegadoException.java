@@ -1,4 +1,4 @@
-package exception.saude;
+package exception;
 
 public class AcessoNegadoException extends Exception {
     public AcessoNegadoException(String msg){

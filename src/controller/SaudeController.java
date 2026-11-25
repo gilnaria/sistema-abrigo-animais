@@ -2,7 +2,7 @@ package controller;
 
 import java.util.List;
 
-import exception.saude.AcessoNegadoException;
+import exception.AcessoNegadoException;
 import exception.saude.RegistroInvalidoException;
 import exception.saude.VacinaDuplicadaException;
 import model.Animal;
