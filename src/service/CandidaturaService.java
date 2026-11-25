@@ -31,7 +31,7 @@ public class CandidaturaService {
         for (Candidatura candidaturaExistente : candidaturasDoVoluntario) {
             if (candidaturaExistente.getAnimal().equals(candidatura.getAnimal()) 
                 && candidaturaExistente.getStatusCandidatura() == Candidatura.StatusCandidatura.PENDENTE) {
-                throw new IllegalArgumentException("Você já possui uma candidatura pendente para este animal.");
+                throw new DadoInvalidoException("Você já possui uma candidatura pendente para este animal.");
             }
         }
 
