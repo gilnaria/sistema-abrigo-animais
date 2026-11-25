@@ -1,14 +1,15 @@
 package model.saude;
 import model.Animal;
+
 import java.time.LocalDate;
 
 public class Tratamento extends RegistroMedico {
    private String tipoTratamento;
    private String duracao;
-   private String statusTratamento;
+   private StatusTratamento statusTratamento;
 
    public Tratamento(Animal animal, LocalDate dataRegistroMedico, String veterinario, String descricao,
-   String tipoTratamento, String duracao, String statusTratamento){
+   String tipoTratamento, String duracao, StatusTratamento statusTratamento){
 
     super(animal, dataRegistroMedico, veterinario, descricao);
     this.tipoTratamento = tipoTratamento;
@@ -25,12 +26,16 @@ public class Tratamento extends RegistroMedico {
     return duracao;
    }
 
-   public String getStatusTratamento(){
+   public StatusTratamento getStatusTratamento(){
     return statusTratamento;
-   }
+  }
 
    public void finalizarTratamento() {
-    this.statusTratamento = "Concluído";
+    this.statusTratamento = StatusTratamento.CONCLUIDO;
+  }
+
+  public void setStatusTratamento(StatusTratamento statusTratamento){
+    this.statusTratamento = statusTratamento;
   }
   
   @Override

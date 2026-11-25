@@ -1,38 +1,32 @@
 package model.saude;
-import model.Animal;
+
 import java.time.LocalDate;
 
-public class Vacina extends RegistroMedico {
-   
-    private String nomeVacina;
-    private LocalDate proximaDose;
-  
-    public Vacina(Animal animal, LocalDate dataRegistroMedico, String veterinario, String descricao, String nomeVacina,
-        LocalDate proximaDose){
+import model.Animal;
 
+public class Vacina extends RegistroMedico {
+    private String nomeVacina;
+    private LocalDate dataProximaDose;
+
+    public Vacina(Animal animal, LocalDate dataRegistroMedico, String veterinario, String descricao,
+            String nomeVacina, LocalDate dataProximaDose) {
         super(animal, dataRegistroMedico, veterinario, descricao);
         this.nomeVacina = nomeVacina;
-        this.proximaDose = proximaDose;
+        this.dataProximaDose = dataProximaDose;
     }
 
-
-    public String getNomeVacina(){
+    public String getNomeVacina() {
         return nomeVacina;
     }
 
-    public LocalDate getProximaDose(){
-        return proximaDose;
+    public LocalDate getDataProximaDose() {
+        return dataProximaDose;
     }
 
-    public boolean verificarProximaDose() {
-        return proximaDose != null;
-       }
-    
     @Override
     public void exibirInfo() {
+        super.exibirDadosBasicos();
         System.out.println("Vacina: " + nomeVacina);
-        System.out.println("Data da aplicação: " + getDataRegistroMedico());
-        System.out.println("Próxima dose: " + proximaDose);
-   
+        System.out.println("Próxima dose: " + dataProximaDose);
     }
 }
