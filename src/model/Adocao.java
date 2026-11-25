@@ -9,12 +9,20 @@ public class Adocao {
     private final LocalDate dataSolicitacao;
     private StatusSolicitacao statusSolicitacao;
     private LocalDate dataDevolucao;
+    private LocalDate dataAdocao;
 
     public void setDataDevolucao(LocalDate dataDevolucao){
         this.dataDevolucao = dataDevolucao;
     }
     public LocalDate getDataDevolucao(){
         return dataDevolucao;
+    }
+
+    public void setDataAdocao(LocalDate dataAdocao){
+        this.dataAdocao = dataAdocao;
+    }
+    public LocalDate getDataAdocao(){
+        return dataAdocao;
     }
 
     public Adocao(Voluntario voluntario, Animal animal, StatusSolicitacao statusSolicitacao){

@@ -8,8 +8,6 @@ public abstract class Usuario {
     private String email;
     private String senha;
     private final LocalDate dataCadastro;
-
-    //fazer verificação com exception depois
     
     public Usuario(String nome, String cpf, String email, String senha){
         this.nome = nome;
