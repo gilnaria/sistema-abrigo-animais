@@ -16,7 +16,7 @@ public class Candidatura {
     public Candidatura(Voluntario voluntario, Animal animal){
         this.voluntario = voluntario;
         this.animal = animal;
-        this.statusCandidatura = statusCandidatura.PENDENTE;
+        this.statusCandidatura = StatusCandidatura.PENDENTE;
     }
 
     public Voluntario getVoluntario(){

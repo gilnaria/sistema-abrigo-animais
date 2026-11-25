@@ -24,8 +24,6 @@ public class UsuarioRepository {
         return null;
     }
 
-    //fazer as verificações se elas estão vazias
-
     public Usuario buscarPorEmail(String email){
         for(Usuario usuario : usuarios){
             if(usuario.getEmail().equalsIgnoreCase(email)){

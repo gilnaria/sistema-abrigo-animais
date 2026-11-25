@@ -1,7 +1,7 @@
 package service;
 
 
-import exception.atividades.DadoInvalidoException;
+import exception.DadoInvalidoException;
 import exception.atividades.EventoNaoEncontradoException;
 import model.atividades.Evento;
 import repository.EventosRepository;

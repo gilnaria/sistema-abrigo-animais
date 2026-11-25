@@ -1,6 +1,9 @@
 package service;
 
 import java.util.List;
+
+import exception.DadoInvalidoException;
+import exception.OperacaoInvalidaException;
 import model.Candidatura;
 import model.acesso.Voluntario;
 import repository.CandidaturaRepository;
@@ -12,15 +15,15 @@ public class CandidaturaService {
         this.candidaturaRepository = candidaturaRepository;
     }
 
-    public void cadastrarCandidatura(Candidatura candidatura){
+    public void cadastrarCandidatura(Candidatura candidatura) throws DadoInvalidoException{
         if(candidatura == null){
-            //Exception
+            throw new DadoInvalidoException("Candidatura não pode ser nula");
         }
         if(candidatura.getVoluntario() == null){
-            //exception
+            throw new DadoInvalidoException("Voluntario não pode ser nulo");
         }
         if(candidatura.getAnimal() == null){
-            //excption
+            throw new DadoInvalidoException("Animal não pode ser nulo");
         }
 
         List<Candidatura> candidaturasDoVoluntario = candidaturaRepository.buscarPorVoluntario(candidatura.getVoluntario());
@@ -35,18 +38,18 @@ public class CandidaturaService {
         candidaturaRepository.adicionarCandidatura(candidatura);
     }
 
-    public void aprovarCandidatura(Candidatura candidatura){
+    public void aprovarCandidatura(Candidatura candidatura) throws DadoInvalidoException, OperacaoInvalidaException{
         if(candidatura == null){
-            //exception
+            throw new DadoInvalidoException("Candidatura não pode ser nula");
         }
         if(candidatura.getStatusCandidatura() != Candidatura.StatusCandidatura.PENDENTE){
-            //exception
+            throw new DadoInvalidoException("Não foi possivel aprovar candidatura");
         }
         if (candidatura.getVoluntario() == null) {
-            //exception
+            throw new DadoInvalidoException("Voluntario não pode ser nulo");
         }
         if (candidatura.getAnimal() == null) {
-            //exception
+            throw new DadoInvalidoException("Animal não pode ser nulo");
         }
         
         List<Candidatura> candidaturasDoAnimal = candidaturaRepository.buscarPorAnimal(candidatura.getAnimal());
@@ -54,7 +57,7 @@ public class CandidaturaService {
         // Verifica se já existe uma candidatura aprovada para esse animal
         for (Candidatura existente : candidaturasDoAnimal) {
             if (existente.getStatusCandidatura() == Candidatura.StatusCandidatura.APROVADA) {
-                //exception
+                throw new OperacaoInvalidaException ("Animal já esta sendo acompanhado");
             }
         }
 
@@ -72,12 +75,12 @@ public class CandidaturaService {
         }
     }
 
-    public void rejeitarCandidatura(Candidatura candidatura){
+    public void rejeitarCandidatura(Candidatura candidatura) throws DadoInvalidoException, OperacaoInvalidaException{
         if(candidatura == null){
-            //exception
+            throw new DadoInvalidoException("Candidatura não pode ser nula");
         }
         if(candidatura.getStatusCandidatura() != Candidatura.StatusCandidatura.PENDENTE){
-            //exception
+            throw new OperacaoInvalidaException("Não foi possivel rejeitar candidatura");
         }
         candidatura.setStatusCandidatura(Candidatura.StatusCandidatura.REPROVADA);
     }

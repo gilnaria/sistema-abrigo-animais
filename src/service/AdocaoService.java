@@ -9,6 +9,11 @@ import model.Animal;
 import model.Adocao;
 import java.util.ArrayList;
 import java.util.List;
+
+import exception.DadoInvalidoException;
+import exception.OperacaoInvalidaException;
+import exception.PermissaoInvalidaException;
+
 import java.time.LocalDate;
 
 public class AdocaoService {
@@ -18,9 +23,9 @@ public class AdocaoService {
         this.adocaoRepository = adocaoRepository;
     }
 
-    public Adocao solicitarAdocao(Voluntario voluntario, Animal animal){
+    public Adocao solicitarAdocao(Voluntario voluntario, Animal animal) throws OperacaoInvalidaException{
         if(animal.getStatusAdocao() != Animal.StatusAdocao.DISPONIVEL){
-            //EXCEPTION
+            throw new OperacaoInvalidaException("Animal indisponivel!");
         }
 
         Adocao adocao = new Adocao (voluntario, animal, StatusSolicitacao.PENDENTE);
@@ -32,20 +37,20 @@ public class AdocaoService {
         return adocao;
     }
 
-    public void aprovarSolicitacao(Animal animal, Usuario usuario){
+    public void aprovarSolicitacao(Animal animal, Usuario usuario) throws PermissaoInvalidaException, DadoInvalidoException, OperacaoInvalidaException{
 
         if(!(usuario instanceof Administrador)){
-            //exception
+            throw new PermissaoInvalidaException("Permissão negada! (somente administradores)");
         }
 
         Adocao adocao = adocaoRepository.buscarSolicitacaoPorAnimal(animal);
 
         if(adocao == null){
-            //exception
+            throw new DadoInvalidoException("Adoção não pode ser nula!");
         }
 
         if(adocao.getStatusSolicitacao() != StatusSolicitacao.PENDENTE){
-            //exception
+            throw new OperacaoInvalidaException("Não é possivel aprovar a solicitação");
         }
 
         adocao.setStatusSolicitacao(StatusSolicitacao.APROVADA);
@@ -55,20 +60,20 @@ public class AdocaoService {
         adocao.setDataAdocao(LocalDate.now());
     }
 
-    public void rejeitarSolicitacao(Animal animal, Usuario usuario){
+    public void rejeitarSolicitacao(Animal animal, Usuario usuario) throws PermissaoInvalidaException, DadoInvalidoException, OperacaoInvalidaException{
 
         if(!(usuario instanceof Administrador)){
-            //exception
+            throw new PermissaoInvalidaException("Permissão negada! (somente administradores)");
         }
 
         Adocao adocao = adocaoRepository.buscarSolicitacaoPorAnimal(animal);
 
         if(adocao == null){
-            //exception
+            throw new DadoInvalidoException("Adoção não pode ser nula!");
         }
 
         if(adocao.getStatusSolicitacao() != StatusSolicitacao.PENDENTE){
-            //exception
+            throw new OperacaoInvalidaException("Não é possivel rejeitar a solicitação");
         }
 
         adocao.setStatusSolicitacao(StatusSolicitacao.REJEITADA);
@@ -87,15 +92,15 @@ public class AdocaoService {
         return adocoesAprovadas;
     }
 
-    public void registrarDevolucao(Animal animal){
+    public void registrarDevolucao(Animal animal) throws DadoInvalidoException, OperacaoInvalidaException{
         Adocao adocao = adocaoRepository.buscarSolicitacaoAprovadaPorAnimal(animal);
 
         if(adocao == null){
-            //exception
+            throw new DadoInvalidoException("Adoção não pode ser nula!");
         }
 
         if(animal.getStatusAdocao() != Animal.StatusAdocao.ADOTADO){
-            //exception
+            throw new OperacaoInvalidaException("Devolução invalida!");
         }
 
         adocao.setDataDevolucao(LocalDate.now());

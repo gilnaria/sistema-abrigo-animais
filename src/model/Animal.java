@@ -3,6 +3,8 @@ package model;
 import java.time.LocalDate;
 
 public class Animal {
+    private static int proximoCodigo = 1;
+    private final int codigo;
     private String nome;
     private String especie;
     private String raca;
@@ -25,8 +27,8 @@ public class Animal {
     private StatusAdocao statusAdocao;
     private Porte porte;
 
-
     public Animal(String nome, String especie, String raca, int idade, Porte porte, String estadoSaude, StatusAdocao statusAdocao){
+        this.codigo = proximoCodigo++;
         this.nome = nome;
         this.especie = especie;
         this.raca = raca;
@@ -37,6 +39,9 @@ public class Animal {
         this.dataResgate = LocalDate.now();
     }
 
+    public int getCodigo(){
+        return codigo;
+    }
     public String getNome(){
         return nome;
     }
@@ -75,5 +80,23 @@ public class Animal {
     }
     public void setStatusAdocao(StatusAdocao statusAdocao){
         this.statusAdocao = statusAdocao;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Animal outro = (Animal) obj;
+        return codigo == outro.codigo;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(codigo);
     }
 }

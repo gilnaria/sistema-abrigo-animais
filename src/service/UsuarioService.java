@@ -5,6 +5,11 @@ import service.CandidaturaService;
 import model.Candidatura;
 import model.acesso.Administrador;
 import model.acesso.Usuario;
+import exception.CpfCadastradoException;
+import exception.DadoInvalidoException;
+import exception.EmailCadastradoException;
+import exception.OperacaoInvalidaException;
+import exception.PermissaoInvalidaException;
 import java.util.List;
 
 public class UsuarioService {
@@ -16,27 +21,24 @@ public class UsuarioService {
         this.candidaturaService = candidaturaService;
     }
 
-    public void cadastrarUsuario(Usuario usuario){
+    public void cadastrarUsuario(Usuario usuario) throws DadoInvalidoException, CpfCadastradoException, EmailCadastradoException {
         if(usuario == null){
-            throw new IllegalArgumentException("Usuário não pode ser nulo.");
-        }
-        if(!(usuario instanceof Administrador)){
-            //Exception
+            throw new DadoInvalidoException("Usuário não pode ser nulo.");
         }
         if(usuario.getNome() == null || usuario.getNome().isBlank()){
-            //Exception
+            throw new DadoInvalidoException("Nome invalido!");
         }
         if(usuario.getCpf() == null || usuario.getCpf().length() < 11){
-            //Exception
+            throw new DadoInvalidoException("CPF invalido!");
         }
         if(usuario.getEmail() == null || usuario.getEmail().isBlank()){
-            //Exception
+            throw new DadoInvalidoException("Email invalido!");
         }
         if(usuarioRepository.buscarPorCpf(usuario.getCpf()) != null){
-            //Exception CPF já cadastrado
+            throw new CpfCadastradoException("Cpf já cadastrado!");
         }
         if(usuarioRepository.buscarPorEmail(usuario.getEmail()) != null){
-            //Exception email já cadastrado
+            throw new EmailCadastradoException("Email já cadastrado!");
         } 
         
         usuarioRepository.adicionarUsuario(usuario);
@@ -59,60 +61,60 @@ public class UsuarioService {
         return usuarioRepository.listarUsuarios();
     }
 
-    public boolean removerUsuario(Usuario usuario){
+    public boolean removerUsuario(Usuario usuario) throws PermissaoInvalidaException{
         if(usuario == null){
             return false;
         }
         if(!(usuario instanceof Administrador)){
-            //exception
+            throw new PermissaoInvalidaException("Permissão negada! (somente Administradores)");
         }
 
         return usuarioRepository.removerUsuario(usuario);
     }
 
-    public boolean editarUsuario(Usuario usuarioAtualizado){
+    public boolean editarUsuario(Usuario usuarioAtualizado) throws DadoInvalidoException, EmailCadastradoException{
         if(usuarioAtualizado == null){
-            //Exception
+            throw new DadoInvalidoException("Usuario não pode ser nulo!");
         }
         if(usuarioAtualizado.getNome() == null || usuarioAtualizado.getNome().isBlank()){
-            //Exception
+            throw new DadoInvalidoException("Nome invalido!");
         }
         if(usuarioAtualizado.getEmail() == null || usuarioAtualizado.getEmail().isBlank()){
-            //Exception
+            throw new DadoInvalidoException("Email invalido!");
         }
 
         Usuario usuarioExistente = usuarioRepository.buscarPorCpf(usuarioAtualizado.getCpf());
 
         if (usuarioExistente == null) {
-            // Exception: usuário não encontrado
+            throw new IllegalArgumentException("Usuario não encontrado!");
         }
 
         Usuario usuarioEncontrado = usuarioRepository.buscarPorEmail(usuarioAtualizado.getEmail());
 
         if(usuarioEncontrado != null && !usuarioEncontrado.getCpf().equals(usuarioAtualizado.getCpf())){
-            //Exception email já cadastrado
+            throw new EmailCadastradoException ("Email já cadastrado");
         } 
 
         return usuarioRepository.editarUsuario(usuarioAtualizado);
     }
 
-    public void aprovarCandidatura(Usuario usuario, Candidatura candidatura){
+    public void aprovarCandidatura(Usuario usuario, Candidatura candidatura) throws DadoInvalidoException, PermissaoInvalidaException, OperacaoInvalidaException{
         if(usuario == null){
-            //exception
+            throw new DadoInvalidoException("Usuario não pode ser nulo");
         }
         if(!(usuario instanceof Administrador)){
-            //exception
+            throw new PermissaoInvalidaException ("Permissão invalida! (somente administradores)");
         }
 
         candidaturaService.aprovarCandidatura(candidatura);
     }
 
-    public void rejeitarCandidatura(Usuario usuario, Candidatura candidatura){
+    public void rejeitarCandidatura(Usuario usuario, Candidatura candidatura) throws DadoInvalidoException, PermissaoInvalidaException, OperacaoInvalidaException{
         if(usuario == null){
-            //exception
+            throw new DadoInvalidoException("Usuario não pode ser nulo");
         }
         if(!(usuario instanceof Administrador)){
-            //exception
+            throw new PermissaoInvalidaException ("Permissão invalida! (somente administradores)");
         }
 
         candidaturaService.rejeitarCandidatura(candidatura);

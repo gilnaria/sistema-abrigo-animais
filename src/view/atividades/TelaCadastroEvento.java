@@ -3,7 +3,7 @@ package view.atividades;
 import model.atividades.Evento;
 import model.atividades.TipoAtividade;
 import controller.EventosController;
-import exception.atividades.DadoInvalidoException;
+import exception.DadoInvalidoException;
 import exception.atividades.EventoNaoEncontradoException;
 
 import java.time.LocalDate;

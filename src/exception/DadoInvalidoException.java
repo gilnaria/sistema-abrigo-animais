@@ -1,4 +1,4 @@
-package exception.atividades;
+package exception;
 
 public class DadoInvalidoException extends Exception {
     

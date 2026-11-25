@@ -1,7 +1,7 @@
 package controller;
 
 import model.atividades.Evento;
-import exception.atividades.DadoInvalidoException;
+import exception.DadoInvalidoException;
 import exception.atividades.EventoNaoEncontradoException;
 import service.EventoService;
 
