@@ -36,7 +36,6 @@ public class Notificacao {
     }
 
     public void exibirInfo() {
-        System.out.println("[" + tipo + "] " + mensagem);
-        System.out.println("Em: " + dataHora + (lida ? " (lida)" : " (não lida)"));
+    System.out.println("[!] " + mensagem);
     }
 }

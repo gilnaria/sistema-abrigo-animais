@@ -18,8 +18,7 @@ public class NotificacaoEvento implements Notificavel {
 
     @Override
     public String gerarMensagemNotificacao() {
-        return "Próximo evento: " + evento.getNomeEvento() + " (" + evento.getTipo() + ") em "
-                + evento.getDataEvento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + " às "
-                + evento.getHorarioEvento() + ", local: " + evento.getLocal() + ".";
+        return "Novo evento cadastrado: " + evento.getNomeEvento() + " em "
+        + evento.getDataEvento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + ".";
     }
 }

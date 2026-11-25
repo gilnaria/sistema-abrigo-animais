@@ -92,6 +92,11 @@ public class NotificacaoService {
         }
     }
 
+    public int contarNaoLidas() {
+        verificarVacinasProximas();
+        return listarNaoLidas().size();
+    }
+
     public List<Notificacao> listarNotificacoes() {
         return new ArrayList<>(notificacoes);
     }

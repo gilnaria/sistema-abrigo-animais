@@ -16,7 +16,7 @@ public class NotificacaoAdocao implements Notificavel {
 
     @Override
     public String gerarMensagemNotificacao() {
-        return "Solicitação de adoção de " + adocao.getAnimal().getNome() + " atualizada: "
-                + adocao.getStatusSolicitacao() + ".";
+        return "Sua solicitação de adoção de " + adocao.getAnimal().getNome() + " foi "
+        + adocao.getStatusSolicitacao().toString().toLowerCase() + ".";
     }
 }

@@ -16,7 +16,7 @@ public class NotificacaoVacina implements Notificavel {
 
     @Override
     public String gerarMensagemNotificacao() {
-        return "Vacina " + vacina.getNomeVacina() + " de " + vacina.getAnimal().getNome()
-                + " vence em " + vacina.getDataProximaDose() + ".";
+    return "Vacina " + vacina.getNomeVacina() + " de " + vacina.getAnimal().getNome()
+     + " vence em " + vacina.getDataProximaDose() + ".";
     }
 }

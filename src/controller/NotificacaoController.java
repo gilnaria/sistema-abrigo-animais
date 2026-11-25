@@ -12,6 +12,8 @@ import model.notificacao.Notificacao;
 import service.NotificacaoService;
 
 public class NotificacaoController {
+    private static final String SEPARADOR = "=".repeat(47);
+
     private NotificacaoService service;
 
     public NotificacaoController(NotificacaoService service) {
@@ -35,21 +37,32 @@ public class NotificacaoController {
         service.notificarAvisoGeral(usuario, mensagem);
     }
 
+    public int contarNaoLidas() {
+        return service.contarNaoLidas();
+    }
+
     public void exibirNaoLidas(List<Evento> eventos) {
         service.verificarVacinasProximas();
         service.verificarEventosProximos(eventos);
 
         List<Notificacao> naoLidas = service.listarNaoLidas();
 
+        System.out.println(SEPARADOR);
+        System.out.println("                NOTIFICAÇÕES");
+        System.out.println(SEPARADOR);
+        System.out.println();
+
         if (naoLidas.isEmpty()) {
             System.out.println("Nenhuma notificação nova.");
-            return;
+            System.out.println();
         }
 
         for (Notificacao notificacao : naoLidas) {
             notificacao.exibirInfo();
-            System.out.println("------------------------");
+            System.out.println();
         }
+
+        System.out.println(SEPARADOR);
 
         service.marcarTodasComoLidas();
     }
