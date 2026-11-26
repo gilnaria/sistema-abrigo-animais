@@ -3,7 +3,6 @@ package repository;
 import model.acesso.Voluntario;
 import model.atividades.Evento;
 import model.atividades.Inscricao;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +41,29 @@ public class InscricaoRepository {
 
     public void remover(Inscricao inscricao) {
         inscricoes.remove(inscricao);
+    }
+
+    public List<Inscricao> buscarPorEvento(Evento evento) {
+        List<Inscricao> resultado = new ArrayList<>();
+
+        for (Inscricao inscricao : inscricoes) {
+            if (inscricao.getEvento().equals(evento)) {
+                resultado.add(inscricao);
+            }
+        }
+        return resultado;
+    }
+
+    public void remover(Inscricao inscricao) {
+        inscricoes.remove(inscricao);
+    }
+
+    public void removerPorEvento(Evento evento) {
+        for (int i = inscricoes.size() - 1; i >= 0; i--) {
+            if (inscricoes.get(i).getEvento().equals(evento)) {
+                inscricoes.remove(i);
+            }
+        }
     }
 
 }
