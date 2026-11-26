@@ -1,30 +1,36 @@
 package model.atividades;
-import model.acesso.Voluntario;
+
 import java.time.LocalDate;
+import model.acesso.Voluntario;
+import util.Formato;
 
 public class Inscricao {
-    private Voluntario voluntario;
-    private Evento evento;
-    private LocalDate dataInscricao;
+    private final Voluntario voluntario;
+    private final Evento evento;
+    private final LocalDate dataInscricao;
 
-    public Inscricao(Voluntario voluntario, Evento evento, LocalDate dataInscricao){
+    public Inscricao(Voluntario voluntario, Evento evento, LocalDate dataInscricao) {
         this.voluntario = voluntario;
         this.evento = evento;
         this.dataInscricao = dataInscricao;
-
     }
 
-    public Voluntario getVoluntario(){
+    public Voluntario getVoluntario() {
         return voluntario;
     }
 
-    public Evento getEvento(){
+    public Evento getEvento() {
         return evento;
     }
 
-    public LocalDate getDataInscricao(){
+    public LocalDate getDataInscricao() {
         return dataInscricao;
     }
 
-
+    @Override
+    public String toString() {
+        String situacao = evento.isEncerrado() ? "realizado" : "agendado";
+        return evento.getNomeEvento() + " (" + evento.getTipo() + ") - " + Formato.data(evento.getDataEvento())
+                + " [" + situacao + "] - inscrito em " + Formato.data(dataInscricao);
+    }
 }

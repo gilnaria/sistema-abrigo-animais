@@ -2,12 +2,11 @@ package model.saude;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import model.Animal;
 
 public class HistoricoAnimal {
-    private Animal animal;
-    private List<RegistroMedico> registros = new ArrayList<>();
+    private final Animal animal;
+    private final List<RegistroMedico> registros = new ArrayList<>();
 
     public HistoricoAnimal(Animal animal) {
         this.animal = animal;
@@ -23,5 +22,27 @@ public class HistoricoAnimal {
 
     public List<RegistroMedico> getRegistros() {
         return new ArrayList<>(registros);
+    }
+
+    public List<Tratamento> getTratamentos() {
+        List<Tratamento> resultado = new ArrayList<>();
+
+        for (RegistroMedico registro : registros) {
+            if (registro instanceof Tratamento) {
+                resultado.add((Tratamento) registro);
+            }
+        }
+        return resultado;
+    }
+
+    public List<Vacina> getVacinas() {
+        List<Vacina> resultado = new ArrayList<>();
+
+        for (RegistroMedico registro : registros) {
+            if (registro instanceof Vacina) {
+                resultado.add((Vacina) registro);
+            }
+        }
+        return resultado;
     }
 }

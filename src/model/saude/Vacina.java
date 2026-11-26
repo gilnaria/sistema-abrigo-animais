@@ -1,12 +1,12 @@
 package model.saude;
 
 import java.time.LocalDate;
-
 import model.Animal;
+import util.Formato;
 
 public class Vacina extends RegistroMedico {
-    private String nomeVacina;
-    private LocalDate dataProximaDose;
+    private final String nomeVacina;
+    private final LocalDate dataProximaDose;
 
     public Vacina(Animal animal, LocalDate dataRegistroMedico, String veterinario, String descricao,
             String nomeVacina, LocalDate dataProximaDose) {
@@ -23,10 +23,17 @@ public class Vacina extends RegistroMedico {
         return dataProximaDose;
     }
 
+    public boolean possuiProximaDose() {
+        return dataProximaDose != null;
+    }
+
     @Override
-    public void exibirInfo() {
-        super.exibirDadosBasicos();
-        System.out.println("Vacina: " + nomeVacina);
-        System.out.println("Próxima dose: " + dataProximaDose);
+    public String getTipoRegistro() {
+        return "Vacina";
+    }
+
+    @Override
+    protected String detalhar() {
+        return "\n   Vacina: " + nomeVacina + "\n   Próxima dose: " + Formato.data(dataProximaDose);
     }
 }

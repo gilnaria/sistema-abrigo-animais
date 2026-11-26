@@ -2,13 +2,13 @@ package model.saude;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-
 import model.Animal;
+import util.Formato;
 
 public class Medicamento extends RegistroMedico {
-    private String nomeMedicamento;
-    private String dosagem;
-    private LocalTime horarioMedicamento;
+    private final String nomeMedicamento;
+    private final String dosagem;
+    private final LocalTime horarioMedicamento;
 
     public Medicamento(Animal animal, LocalDate dataRegistroMedico, String veterinario, String descricao,
             String nomeMedicamento, String dosagem, LocalTime horarioMedicamento) {
@@ -30,11 +30,20 @@ public class Medicamento extends RegistroMedico {
         return horarioMedicamento;
     }
 
+    public boolean verificarHorarioMedicamento() {
+        LocalTime agora = LocalTime.now();
+        return agora.getHour() == horarioMedicamento.getHour()
+                && agora.getMinute() == horarioMedicamento.getMinute();
+    }
+
     @Override
-    public void exibirInfo() {
-        exibirDadosBasicos();
-        System.out.println("Medicamento: " + nomeMedicamento);
-        System.out.println("Dosagem: " + dosagem);
-        System.out.println("Horário: " + horarioMedicamento);
+    public String getTipoRegistro() {
+        return "Medicamento";
+    }
+
+    @Override
+    protected String detalhar() {
+        return "\n   Medicamento: " + nomeMedicamento + "\n   Dosagem: " + dosagem
+                + "\n   Horário: " + Formato.hora(horarioMedicamento);
     }
 }
