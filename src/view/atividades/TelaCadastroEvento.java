@@ -1,368 +1,110 @@
 package view.atividades;
 
-import model.atividades.Evento;
-import model.atividades.TipoAtividade;
 import controller.EventosController;
-import exception.DadoInvalidoException;
-import exception.atividades.EventoNaoEncontradoException;
-
+import controller.InscricoesController;
+import exception.AbrigoException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.time.format.ResolverStyle;
 import java.time.LocalTime;
-import java.util.Scanner;
 import java.util.List;
+import model.acesso.Usuario;
+import model.atividades.Evento;
+import model.atividades.Inscricao;
+import model.atividades.TipoAtividade;
+import util.Entrada;
+import view.TelaBase;
 
-public class TelaCadastroEvento {
-    private EventosController controller;
-    private Scanner scanner;
+public class TelaCadastroEvento extends TelaBase {
+    private final EventosController eventos;
+    private final InscricoesController inscricoes;
 
-    public TelaCadastroEvento(EventosController controller, Scanner scanner){
-        this.controller = controller;
-        this.scanner = scanner;
+    public TelaCadastroEvento(EventosController eventos, InscricoesController inscricoes) {
+        this.eventos = eventos;
+        this.inscricoes = inscricoes;
     }
 
-    public void exibirMenuEventos(){
+    public void exibirMenuEventos(Usuario administrador) {
         int opcao;
-        
-        do{
-        System.out.println("┌────────────────────────────────────┐");
-        System.out.println("|          MENU DE ATIVIDADES        |");
-        System.out.println("├────────────────────────────────────┤");
-        System.out.println("| 1 - Cadastrar evento               |");
-        System.out.println("| 2 - Exibir eventos disponíveis     |");
-        System.out.println("| 3 - Consultar evento               |");
-        System.out.println("| 4 - Cancelar evento                |");
-        System.out.println("| 0 - Voltar                         |"); 
-        System.out.println("└────────────────────────────────────┘");
-        System.out.println("│ Escolha uma opção:                 | ");
-        System.out.print("│ > ");
-        opcao = scanner.nextInt();
-        scanner.nextLine();
-        System.out.println("└────────────────────────────────────┘");
-        System.out.println("\n");
-        
 
-        switch (opcao){
-            case 1:
-                System.out.println("┌────────────────────────────────────────────────────────────┐");
-                System.out.println("|                     CADASTRO DE ATIVIDADE                  |");
-                System.out.println("└────────────────────────────────────────────────────────────┘");
-                System.out.print("[NOME]: ");
-                String nome = scanner.nextLine();
-                System.out.println("-------------------------------------------------------------");
-              
-                System.out.println("┌───────────────────────────────┐");
-                System.out.println("│       TIPOS DE ATIVIDADE      │");
-                System.out.println("├───────────────────────────────┤");
+        do {
+            menu("MENU DE ATIVIDADES",
+                    "1 - Cadastrar atividade",
+                    "2 - Listar atividades",
+                    "3 - Consultar atividade e inscritos",
+                    "4 - Cancelar atividade",
+                    "0 - Voltar");
+            opcao = Entrada.lerInt("Opção");
 
-                TipoAtividade[] tipos = TipoAtividade.values();
-
-                for (int i = 0; i < tipos.length; i++) {
-                System.out.printf("│ %d - %-25s │%n", (i + 1), tipos[i]);
-                }
-
-                System.out.println("└───────────────────────────────┘");
-
-                System.out.print("\nEscolha o tipo de atividade: ");
-                int escolhaTipo = scanner.nextInt();
-                scanner.nextLine();
-
-                if (escolhaTipo < 1 || escolhaTipo > tipos.length) {
-                System.out.println("┌─────────────────────────────────────────────┐");
-                System.out.println("|                 TIPO INVÁLIDO.              |");
-                System.out.println("└─────────────────────────────────────────────┘");
-                break;
-                }
-
-                TipoAtividade tipo = tipos[escolhaTipo - 1];
-                
-                System.out.println("-------------------------------------------------------------");
-                System.out.print("[LOCAL]: ");
-                String local = scanner.nextLine();
-                
-
-                DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/uuuu").withResolverStyle(ResolverStyle.STRICT);
-                System.out.println("-------------------------------------------------------------");
-                LocalDate data = null;
-                while(data == null){
-                    System.out.print("[DATA (DD/MM/AAAA)]: ");
-                    try{
-                        data = LocalDate.parse(scanner.nextLine(), formato);
-                    }catch(DateTimeParseException erro){
-                        System.out.println("[ DATA INVÁLIDA. USE O FORMATO DD/MM/AAAA. ]");
-                    }
-                }
-
-                System.out.println("-------------------------------------------------------------");
-
-                LocalTime horario = null;
-                while(horario == null){
-                    System.out.print("[HORÁRIO (HH:MM)]: ");
-                    try{
-                        horario = LocalTime.parse(scanner.nextLine());
-                    }catch(DateTimeParseException erro){
-                    System.out.println("[ HORÁRIO INVÁLIDO. USE O FORMATO HH:MM. ]");
-                    }
-                }
-
-                System.out.println("-------------------------------------------------------------");
-
-                System.out.print("[VAGAS DISPONÍVEIS]: ");
-                int vagas = scanner.nextInt();
-                System.out.println("-------------------------------------------------------------");
-
-                boolean confirmar = false;
-
-                while(!confirmar){
-                    System.out.println("┌────────────────────────────────────────────────────────────┐");
-                    System.out.println("|                     CADASTRO DE ATIVIDADE                  |");
-                    System.out.println("├────────────────────────────────────────────────────────────┤");
-                    
-                    System.out.printf("│ [NOME]:     %-46s │%n", nome);
-                    System.out.printf("│ [TIPO]:     %-46s │%n", tipo);
-                    System.out.printf("│ [LOCAL]:    %-46s │%n", local);
-                    System.out.printf("│ [DATA]:     %-46s │%n", data.format(formato));
-                    System.out.printf("│ [HORÁRIO]:  %-46s │%n", horario);
-                    System.out.printf("│ [VAGAS]:    %-46d │%n", vagas);
-                    
-                    System.out.println("└────────────────────────────────────────────────────────────┘");
-                   
-                    System.out.println("┌─────────────────────────────────┐");
-                    System.out.println("| 1 - [ CONFIRMAR ]               |");
-                    System.out.println("| 2 - [ EDITAR ]                  |");
-                    System.out.println("| 0 - [ CANCELAR CADASTRO ]       |");
-                    System.out.println("└─────────────────────────────────┘");
-                    System.out.print("|> ");
-                    int opcaoConfirmacao = scanner.nextInt();
-                    scanner.nextLine();
-
-                    switch(opcaoConfirmacao){
-                        case 1:
-                            try{    
-                                Evento novoEvento = new Evento(nome, tipo, local, data, horario, vagas);
-
-                                controller.cadastrarEvento(novoEvento);
-
-                                System.out.println("┌────────────────────────────────────────────────────────────┐");
-                                System.out.println("|                 EVENTO CADASTRADO COM SUCESSO!             |");
-                                System.out.println("└────────────────────────────────────────────────────────────┘");
-                                confirmar = true;
-                            
-                            }catch(DadoInvalidoException erro){
-                                System.out.println(erro.getMessage());
-                            }
-                            
-                                break;
-
-                        case 2:
-
-                            System.out.println("┌──────────────────────────────────────┐");
-                            System.out.println("|          CADASTRO DE ATIVIDADE       |");
-                            System.out.println("├──────────────────────────────────────┤");
-                            System.out.println("| 1 - [NOME]                           |");
-                            System.out.println("| 2 - [TIPO DE ATIVIDADE]              |");
-                            System.out.println("| 3 - [LOCAL]                          |");
-                            System.out.println("| 4 - [DATA]                           |");
-                            System.out.println("| 5 - [HORÁRIO]                        |");
-                            System.out.println("| 6 - [VAGAS]                          |");  
-                            System.out.println("└──────────────────────────────────────┘");
-                            System.out.println("│ O que deseja editar?                 | ");
-                            System.out.print("|>");
-                            int campo = scanner.nextInt();
-                            scanner.nextLine();
-
-                            switch(campo){
-                                case 1:
-                                    System.out.print("[NOME]: ");
-                                    nome = scanner.nextLine();
-                                    break;
-
-                                case 2:
-                                    for (int i = 0; i < tipos.length; i++) {
-                                    System.out.println((i + 1) + " - " + tipos[i]);
-                                    }
-
-                                    System.out.print("[TIPO]: ");
-                                    int novoTipo = scanner.nextInt();
-                                    scanner.nextLine();
-
-                                    if (novoTipo >= 1 && novoTipo <= tipos.length) {
-                                    tipo = tipos[novoTipo - 1];
-                                    } 
-                                    else {
-                                    System.out.println("┌───────────────────────────────────────────┐");
-                                    System.out.println("|               TIPO INVÁLIDO.              |");
-                                    System.out.println("└───────────────────────────────────────────┘");
-                                    }
-                                    break;
-
-                                case 3:
-                                    System.out.print("[LOCAL]: ");
-                                    local = scanner.nextLine();
-                                    break;
-
-                                case 4:
-                                    data = null;
-                                    while(data == null){
-                                        System.out.print("[DATA (DD/MM/AAAA)]: ");
-                                        try{
-                                            data = LocalDate.parse(scanner.nextLine(), formato);
-                                        }catch(DateTimeParseException erro){
-                                            System.out.println("[ DATA INVÁLIDA. USE O FORMATO DD/MM/AAAA. ]");
-                                        }
-                                    }
-                                    break;
-
-                                case 5:
-                                    horario = null;
-                                    while(horario == null){
-                                        System.out.print("[HORÁRIO (HH:MM)]: ");
-                                        try{
-                                            horario = LocalTime.parse(scanner.nextLine());
-                                        }catch(DateTimeParseException erro){
-                                            System.out.println("[ HORÁRIO INVÁLIDO. USE O FORMATO HH:MM. ]");
-                                        }
-                                    }
-                                    break;
-
-                                case 6:
-                                    System.out.print("[VAGAS DISPONÍVEIS]: ");
-                                    vagas = scanner.nextInt();
-                                    scanner.nextLine();
-                                    break;
-
-                                default:
-                                    System.out.println("┌───────────────────────────────────────────┐");
-                                    System.out.println("|               OPÇÃO INVÁLIDA.             |");
-                                    System.out.println("└───────────────────────────────────────────┘");
-                                }
-                                break;
-
-                                case 0:
-                                    System.out.println("┌───────────────────────────────────────────┐");
-                                    System.out.println("|             CADASTRO CANCELADO.           |");
-                                    System.out.println("└───────────────────────────────────────────┘");
-                                    confirmar = true;
-                                    break;
-
-                                default:
-                                System.out.println("┌───────────────────────────────────────────┐");
-                                System.out.println("|               OPÇÃO INVÁLIDA.             |");
-                                System.out.println("└───────────────────────────────────────────┘");
-                                 }
-                                }
-                                break;
-           
-            case 2:               
-             List<Evento> eventos = controller.listarEventos();
-            
-             System.out.println("┌────────────────────────────────────────────────────────────┐");
-             System.out.println("|                    EVENTOS DISPONÍVEIS:                    |");
-             System.out.println("└────────────────────────────────────────────────────────────┘");
-
-             if (eventos.isEmpty()) {
-             System.out.println("┌────────────────────────────────────────────────────────────┐");
-             System.out.println("|                 NÃO HÁ EVENTOS CADASTRADOS!                |");
-             System.out.println("└────────────────────────────────────────────────────────────┘");
-             } 
-             else {
-                for (Evento evento : eventos) {
-             evento.exibirInfo();
-              }
-             }
-            break;
-
-            case 3:
-                eventos = controller.listarEventos();
-
-                System.out.println("┌────────────────────────────────────────────────────────────┐");
-                System.out.println("|                       CONSULTAR EVENTOS:                   |");
-                System.out.println("└────────────────────────────────────────────────────────────┘");
-
-                for(int i = 0; i < eventos.size(); i++){
-                    System.out.println("------------------------------------------------------------");
-                    System.out.println((i + 1) + " - " + eventos.get(i).getNomeEvento());
-                    System.out.println("------------------------------------------------------------");
-
-                }
-                System.out.println("┌──────────────────────────────────┐");
-                System.out.println("|           VER DETALHES:          |");
-                System.out.println("└──────────────────────────────────┘");
-                System.out.print("|> ");
-                int escolha = scanner.nextInt();
-                scanner.nextLine();
-                
-                if(escolha >= 1 && escolha <= eventos.size()){
-                    eventos.get(escolha - 1).exibirInfo();
-                }
-                else{
-                    System.out.println("┌──────────────────────────────────────────────┐");
-                    System.out.println("|                EVENTO INVÁLIDO.              |");
-                    System.out.println("└──────────────────────────────────────────────┘");
-                }
-                break;
-
-            case 4: 
-            eventos = controller.listarEventos();
-            
-            System.out.println("┌────────────────────────────────────────────────────────────┐");
-            System.out.println("|                      EVENTOS DISPONÍVEIS:                  |");
-            System.out.println("└────────────────────────────────────────────────────────────┘");
-            if(eventos.isEmpty()){
-                System.out.println("┌──────────────────────────────────────────────────┐");
-                System.out.println("|           NÃO HÁ EVENTOS CADASTRADOS!            |");
-                System.out.println("└──────────────────────────────────────────────────┘");
-                break;
+            switch (opcao) {
+                case 1:
+                    cadastrar(administrador);
+                    break;
+                case 2:
+                    listar("ATIVIDADES CADASTRADAS", eventos.listarEventos());
+                    break;
+                case 3:
+                    consultar();
+                    break;
+                case 4:
+                    cancelar(administrador);
+                    break;
+                case 0:
+                    break;
+                default:
+                    erro("Opção inválida.");
             }
+        } while (opcao != 0);
+    }
 
-            for(int i = 0; i < eventos.size(); i++){
-                System.out.println("------------------------------------------------------------");
-                System.out.println((i + 1) + " - " + eventos.get(i).getNomeEvento());
-                System.out.println("------------------------------------------------------------");
-            }
+    private void cadastrar(Usuario administrador) {
+        titulo("CADASTRO DE ATIVIDADE");
 
-            System.out.println("┌───────────────────────────────────────────────┐");
-            System.out.println("| ESCOLHA O EVENTO QUE DESEJA REMOVER:          |");
-            System.out.println("└───────────────────────────────────────────────┘");
-            System.out.print("|> ");
-            int numero = scanner.nextInt();
-            scanner.nextLine();
+        String nome = Entrada.lerTexto("Nome");
+        TipoAtividade tipo = (TipoAtividade) Entrada.lerEscolha("Tipo de atividade:", TipoAtividade.values());
+        String local = Entrada.lerTexto("Local");
+        LocalDate data = Entrada.lerData("Data");
+        LocalTime horario = Entrada.lerHora("Horário");
+        int vagas = Entrada.lerInt("Vagas disponíveis");
 
-            if(numero >= 1 && numero <= eventos.size()){
-                try{
-                    controller.remover(eventos.get(numero-1));
-                    System.out.println("┌────────────────────────────────────────────────────────┐");
-                    System.out.println("|               EVENTO REMOVIDO COM SUCESSO!             |");
-                    System.out.println("└────────────────────────────────────────────────────────┘");
-                
-                }catch(EventoNaoEncontradoException erro){
-                    System.out.println(erro.getMessage());
-                }    
-            }
-            else{
-                System.out.println("┌───────────────────────────────────────────┐");
-                System.out.println("|               OPÇÃO INVÁLIDA.             |");
-                System.out.println("└───────────────────────────────────────────┘");
-            }
-            break;
+        try {
+            eventos.cadastrarEvento(administrador, new Evento(nome, tipo, local, data, horario, vagas));
+            sucesso("Atividade cadastrada.");
+        } catch (AbrigoException e) {
+            tratarErro(e);
+        }
+    }
 
-            case 0:
-                System.out.println("┌───────────────────────────────────────────────────────┐");
-                System.out.println("|               VOLTANDO AO MENU PRINCIPAL...           |");
-                System.out.println("└───────────────────────────────────────────────────────┘");
-                break;
-            
-            default:
-                System.out.println("┌───────────────────────────────────────────┐");
-                System.out.println("|               OPÇÃO INVÁLIDA.             |");
-                System.out.println("└───────────────────────────────────────────┘");
-   
+    private void consultar() {
+        Evento evento = (Evento) escolher("ESCOLHA A ATIVIDADE", eventos.listarEventos());
+
+        if (evento == null) {
+            return;
         }
 
-    }while (opcao != 0);
-    
-  }
+        linha();
+        evento.exibirInfo();
+        System.out.println("Vagas restantes: " + inscricoes.vagasRestantes(evento));
+        linha();
 
-}   
+        List<Inscricao> inscritos = inscricoes.listarInscritos(evento);
+        System.out.println("Voluntários inscritos: " + inscritos.size());
+
+        for (Inscricao inscricao : inscritos) {
+            System.out.println(" - " + inscricao.getVoluntario().getNome());
+        }
+    }
+
+    private void cancelar(Usuario administrador) {
+        Evento evento = (Evento) escolher("ESCOLHA A ATIVIDADE A CANCELAR", eventos.listarEventos());
+
+        if (evento == null || !Entrada.confirmar("Confirma o cancelamento de " + evento.getNomeEvento() + "?")) {
+            return;
+        }
+
+        try {
+            eventos.remover(administrador, evento);
+            sucesso("Atividade cancelada e inscrições removidas.");
+        } catch (AbrigoException e) {
+            tratarErro(e);
+        }
+    }
+}

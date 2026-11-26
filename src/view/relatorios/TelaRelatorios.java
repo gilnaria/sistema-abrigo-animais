@@ -1,172 +1,106 @@
 package view.relatorios;
- 
-import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
- 
+
 import controller.RelatorioController;
-import exception.PermissaoInvalidaException;
+import exception.AbrigoException;
+import java.time.YearMonth;
+import java.util.List;
 import model.acesso.Usuario;
-import model.saude.Tratamento;
- 
-public class TelaRelatorios {
-    private final RelatorioController controller;
-    private final Usuario usuario;
-    private final Scanner scanner;
- 
-    public TelaRelatorios(RelatorioController controller, Usuario usuario, Scanner scanner) {
-        this.controller = controller;
-        this.usuario = usuario;
-        this.scanner = scanner;
+import util.Entrada;
+import view.TelaBase;
+
+public class TelaRelatorios extends TelaBase {
+    public static final int MESES_EXIBIDOS = 6;
+
+    private final RelatorioController relatorios;
+
+    public TelaRelatorios(RelatorioController relatorios) {
+        this.relatorios = relatorios;
     }
- 
-    public void exibirMenu() {
+
+    public void exibirMenu(Usuario administrador) {
         int opcao;
- 
+
         do {
-            System.out.println("┌────────────────────────────────────────────────────────────┐");
-            System.out.println("|                  RELATÓRIOS E ESTATÍSTICAS                 |");
-            System.out.println("├────────────────────────────────────────────────────────────┤");
-            System.out.println("| 1 - Quantidade de animais resgatados                       |");
-            System.out.println("| 2 - Quantidade de adoções realizadas                       |");
-            System.out.println("| 3 - Espécies mais resgatadas                               |");
-            System.out.println("| 4 - Taxa de adoção mensal                                  |");
-            System.out.println("| 5 - Número de voluntários ativos                           |");
-            System.out.println("| 6 - Relatório de animais em tratamento                     |");
-            System.out.println("| 7 - Relatório completo                                     |");
-            System.out.println("| 0 - Voltar                                                 |");
-            System.out.println("└────────────────────────────────────────────────────────────┘");
-            System.out.print("│ > ");
- 
-            opcao = lerOpcao();
- 
+            menu("RELATÓRIOS E ESTATÍSTICAS",
+                    "1 - Animais resgatados",
+                    "2 - Adoções realizadas",
+                    "3 - Espécies mais resgatadas",
+                    "4 - Taxa de adoção mensal",
+                    "5 - Voluntários ativos",
+                    "6 - Animais em tratamento",
+                    "7 - Resumo geral",
+                    "0 - Voltar");
+            opcao = Entrada.lerInt("Opção");
+
             try {
                 switch (opcao) {
                     case 1:
-                        exibirAnimaisResgatados();
+                        System.out.println("Animais resgatados: " + relatorios.totalAnimaisResgatados(administrador));
                         break;
                     case 2:
-                        exibirAdocoesRealizadas();
+                        System.out.println("Adoções realizadas: " + relatorios.totalAdocoesRealizadas(administrador));
                         break;
                     case 3:
-                        exibirEspeciesMaisResgatadas();
+                        exibirEspecies(administrador);
                         break;
                     case 4:
-                        exibirTaxaAdocaoMensal();
+                        exibirTaxas(administrador);
                         break;
                     case 5:
-                        exibirVoluntariosAtivos();
+                        System.out.println("Voluntários ativos: " + relatorios.voluntariosAtivos(administrador));
                         break;
                     case 6:
-                        exibirAnimaisEmTratamento();
+                        listar("ANIMAIS EM TRATAMENTO", relatorios.animaisEmTratamento(administrador));
                         break;
                     case 7:
-                        exibirRelatorioCompleto();
+                        exibirResumo(administrador);
                         break;
                     case 0:
                         break;
                     default:
-                        System.out.println("[ OPÇÃO INVÁLIDA. ]");
+                        erro("Opção inválida.");
                 }
-            } catch (PermissaoInvalidaException e) {
-                System.out.println("[ " + e.getMessage() + " ]");
+            } catch (AbrigoException e) {
+                tratarErro(e);
             }
- 
-            System.out.println();
         } while (opcao != 0);
     }
- 
-    public void exibirRelatorioCompleto() throws PermissaoInvalidaException {
-        System.out.println("┌────────────────────────────────────────────────────────────┐");
-        System.out.println("|                     RELATÓRIO COMPLETO                     |");
-        System.out.println("└────────────────────────────────────────────────────────────┘");
- 
-        exibirAnimaisResgatados();
-        exibirAdocoesRealizadas();
-        exibirEspeciesMaisResgatadas();
-        exibirTaxaAdocaoMensal();
-        exibirVoluntariosAtivos();
-        exibirAnimaisEmTratamento();
-    }
- 
-    public void exibirAnimaisResgatados() throws PermissaoInvalidaException {
-        System.out.println("\n● Animais resgatados: " + controller.quantidadeAnimaisResgatados(usuario));
-    }
- 
-    public void exibirAdocoesRealizadas() throws PermissaoInvalidaException {
-        System.out.println("\n● Adoções realizadas: " + controller.quantidadeAdocoesRealizadas(usuario));
-    }
- 
-    public void exibirEspeciesMaisResgatadas() throws PermissaoInvalidaException {
-        Map<String, Integer> ranking = controller.especiesMaisResgatadas(usuario);
- 
-        System.out.println("\n● Espécies mais resgatadas:");
- 
-        if (ranking.isEmpty()) {
-            System.out.println("  Nenhum animal cadastrado.");
-            return;
+
+    private void exibirEspecies(Usuario administrador) throws AbrigoException {
+        titulo("ESPÉCIES MAIS RESGATADAS");
+        List<String> especies = relatorios.especiesMaisResgatadas(administrador);
+
+        if (especies.isEmpty()) {
+            aviso("Nenhum animal cadastrado.");
         }
- 
-        int posicao = 1;
- 
-        for (Map.Entry<String, Integer> entrada : ranking.entrySet()) {
-            System.out.println("  " + posicao + "º " + entrada.getKey() + " - " + entrada.getValue());
-            posicao++;
+
+        for (int i = 0; i < especies.size(); i++) {
+            System.out.println((i + 1) + "º - " + especies.get(i));
         }
     }
- 
-    public void exibirTaxaAdocaoMensal() throws PermissaoInvalidaException {
-        Map<YearMonth, Double> taxas = controller.taxaAdocaoMensal(usuario);
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("MM/yyyy");
- 
-        System.out.println("\n● Taxa de adoção mensal:");
- 
-        if (taxas.isEmpty()) {
-            System.out.println("  Nenhum animal cadastrado.");
-            return;
-        }
- 
-        for (Map.Entry<YearMonth, Double> entrada : taxas.entrySet()) {
-            System.out.println("  " + entrada.getKey().format(formato) + " - "
-                    + String.format("%.1f%%", entrada.getValue()));
+
+    private void exibirTaxas(Usuario administrador) throws AbrigoException {
+        titulo("TAXA DE ADOÇÃO MENSAL");
+        System.out.println("(adoções concluídas no mês / animais resgatados até o fim do mês)");
+
+        YearMonth mes = YearMonth.now();
+
+        for (int i = 0; i < MESES_EXIBIDOS; i++) {
+            double taxa = relatorios.taxaAdocaoMensal(administrador, mes);
+            System.out.printf("%02d/%d: %.1f%%%n", mes.getMonthValue(), mes.getYear(), taxa);
+            mes = mes.minusMonths(1);
         }
     }
- 
-    public void exibirVoluntariosAtivos() throws PermissaoInvalidaException {
-        System.out.println("\n● Voluntários ativos: " + controller.quantidadeVoluntariosAtivos(usuario));
-    }
- 
-    public void exibirAnimaisEmTratamento() throws PermissaoInvalidaException {
-        List<Tratamento> tratamentos = controller.tratamentosEmAndamento(usuario);
- 
-        System.out.println("\n● Animais em tratamento:");
- 
-        if (tratamentos.isEmpty()) {
-            System.out.println("  Nenhum animal em tratamento.");
-            return;
-        }
- 
-        for (Tratamento tratamento : tratamentos) {
-            System.out.println("  Animal: " + tratamento.getAnimal().getNome()
-                    + " (código " + tratamento.getAnimal().getCodigo() + ")");
-            System.out.println("  Tratamento: " + tratamento.getTipoTratamento());
-            System.out.println("  Status: " + tratamento.getStatusTratamento());
-            System.out.println("  Veterinário: " + tratamento.getVeterinario());
-            System.out.println("  Início: " + tratamento.getDataRegistroMedico());
-            System.out.println("  ----------------------------------------");
-        }
- 
-        System.out.println("  Total: " + tratamentos.size());
-    }
- 
-    private int lerOpcao() {
-        try {
-            return Integer.parseInt(scanner.nextLine().trim());
-        } catch (NumberFormatException e) {
-            return -1;
-        }
+
+    private void exibirResumo(Usuario administrador) throws AbrigoException {
+        titulo("RESUMO GERAL");
+        System.out.println("Animais resgatados: " + relatorios.totalAnimaisResgatados(administrador));
+        System.out.println("Adoções realizadas: " + relatorios.totalAdocoesRealizadas(administrador));
+        System.out.println("Voluntários ativos: " + relatorios.voluntariosAtivos(administrador));
+        System.out.println("Animais em tratamento: " + relatorios.animaisEmTratamento(administrador).size());
+        System.out.printf("Taxa de adoção do mês atual: %.1f%%%n",
+                relatorios.taxaAdocaoMensal(administrador, YearMonth.now()));
+        exibirEspecies(administrador);
     }
 }
  
