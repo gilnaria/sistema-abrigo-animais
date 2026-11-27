@@ -1,6 +1,8 @@
 package exception.saude;
 
-public class VacinaDuplicadaException extends Exception {
+import exception.AbrigoException;
+
+public class VacinaDuplicadaException extends AbrigoException {
 
     public VacinaDuplicadaException(String msg){
         super(msg);

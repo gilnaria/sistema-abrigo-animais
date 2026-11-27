@@ -1,6 +1,8 @@
 package exception.atividades;
 
-public class InscricaoDuplicadaException extends Exception {
+import exception.AbrigoException;
+
+public class InscricaoDuplicadaException extends AbrigoException {
     
        public InscricaoDuplicadaException(String msg){
         super(msg);

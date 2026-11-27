@@ -1,6 +1,8 @@
 package exception.saude;
 
-public class TratamentoCriticoException extends Exception {
+import exception.AbrigoException;
+
+public class TratamentoCriticoException extends AbrigoException {
 
     public TratamentoCriticoException(String msg){
         super(msg);

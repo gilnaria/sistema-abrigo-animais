@@ -1,6 +1,8 @@
 package exception.atividades;
 
-public class VagasEsgotadasException extends Exception {
+import exception.AbrigoException;
+
+public class VagasEsgotadasException extends AbrigoException {
 
     public VagasEsgotadasException(String msg){
         super(msg);
