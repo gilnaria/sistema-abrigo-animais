@@ -1,29 +1,33 @@
 package controller;
 
-import model.atividades.Evento;
 import exception.DadoInvalidoException;
+import exception.acesso.AcessoNegadoException;
 import exception.atividades.EventoNaoEncontradoException;
+import java.util.List;
+import model.acesso.Usuario;
+import model.atividades.Evento;
 import service.EventoService;
 
-import java.util.List;
-
 public class EventosController {
-    private EventoService service;
+    private final EventoService service;
 
-    public EventosController(EventoService service){
+    public EventosController(EventoService service) {
         this.service = service;
     }
 
-    public void cadastrarEvento(Evento evento) throws DadoInvalidoException{
-        service.cadastrarEvento(evento);
-    
+    public void cadastrarEvento(Usuario usuario, Evento evento) throws AcessoNegadoException, DadoInvalidoException {
+        service.cadastrarEvento(usuario, evento);
     }
 
     public List<Evento> listarEventos() {
         return service.listarEventos();
     }
 
-    public void remover(Evento evento) throws EventoNaoEncontradoException{
-        service.remover(evento);
+    public List<Evento> listarEventosDisponiveis() {
+        return service.listarEventosDisponiveis();
+    }
+
+    public void remover(Usuario usuario, Evento evento) throws AcessoNegadoException, EventoNaoEncontradoException {
+        service.remover(usuario, evento);
     }
 }

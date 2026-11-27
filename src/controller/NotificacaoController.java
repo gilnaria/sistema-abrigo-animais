@@ -1,69 +1,42 @@
 package controller;
 
+import exception.acesso.AcessoNegadoException;
 import java.util.List;
-
-import exception.AcessoNegadoException;
-import exception.NotificacaoInvalidaException;
-import model.Adocao;
-import model.Animal;
 import model.acesso.Usuario;
 import model.atividades.Evento;
 import model.notificacao.Notificacao;
+import service.EventoService;
 import service.NotificacaoService;
 
 public class NotificacaoController {
-    private static final String SEPARADOR = "=".repeat(47);
+    private final NotificacaoService service;
+    private final EventoService eventoService;
 
-    private NotificacaoService service;
-
-    public NotificacaoController(NotificacaoService service) {
+    public NotificacaoController(NotificacaoService service, EventoService eventoService) {
         this.service = service;
+        this.eventoService = eventoService;
     }
 
-    public void notificarNovoAnimal(Animal animal) throws NotificacaoInvalidaException {
-        service.notificarNovoAnimal(animal);
-    }
-
-    public void notificarEvento(Evento evento) throws NotificacaoInvalidaException {
-        service.notificarEvento(evento);
-    }
-
-    public void notificarAtualizacaoAdocao(Adocao adocao) throws NotificacaoInvalidaException {
-        service.notificarAtualizacaoAdocao(adocao);
-    }
-
-    public void publicarAvisoGeral(Usuario usuario, String mensagem)
-            throws AcessoNegadoException, NotificacaoInvalidaException {
+    public void publicarAvisoGeral(Usuario usuario, String mensagem) throws AcessoNegadoException {
         service.notificarAvisoGeral(usuario, mensagem);
     }
 
-    public int contarNaoLidas() {
-        return service.contarNaoLidas();
+    public int contarNaoLidas(Usuario usuario) {
+        return service.contarNaoLidas(usuario, eventoService.listarEventos());
     }
 
-    public void exibirNaoLidas(List<Evento> eventos) {
+    public List<Notificacao> obterNaoLidas(Usuario usuario) {
+        List<Evento> eventos = eventoService.listarEventos();
         service.verificarVacinasProximas();
         service.verificarEventosProximos(eventos);
+        return service.listarNaoLidas(usuario);
+    }
 
-        List<Notificacao> naoLidas = service.listarNaoLidas();
+    public List<Notificacao> listarTodas() {
+        return service.listarNotificacoes();
+    }
 
-        System.out.println(SEPARADOR);
-        System.out.println("                NOTIFICAÇÕES");
-        System.out.println(SEPARADOR);
-        System.out.println();
-
-        if (naoLidas.isEmpty()) {
-            System.out.println("Nenhuma notificação nova.");
-            System.out.println();
-        }
-
-        for (Notificacao notificacao : naoLidas) {
-            notificacao.exibirInfo();
-            System.out.println();
-        }
-
-        System.out.println(SEPARADOR);
-
-        service.marcarTodasComoLidas();
+    public void marcarTodasComoLidas(Usuario usuario) {
+        service.marcarTodasComoLidas(usuario);
     }
 }

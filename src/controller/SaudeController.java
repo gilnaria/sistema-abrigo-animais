@@ -1,21 +1,18 @@
 package controller;
 
-import java.util.List;
-
-import exception.AcessoNegadoException;
+import exception.acesso.AcessoNegadoException;
 import exception.saude.RegistroInvalidoException;
 import exception.saude.VacinaDuplicadaException;
+import java.util.List;
 import model.Animal;
 import model.acesso.Usuario;
-import model.saude.HistoricoAnimal;
 import model.saude.RegistroMedico;
 import model.saude.StatusTratamento;
 import model.saude.Tratamento;
-import model.saude.Vacina;
 import service.SaudeService;
 
 public class SaudeController {
-    private SaudeService service;
+    private final SaudeService service;
 
     public SaudeController(SaudeService service) {
         this.service = service;
@@ -26,32 +23,26 @@ public class SaudeController {
         service.adicionarRegistro(usuario, registro);
     }
 
-    public HistoricoAnimal buscarHistorico(Animal animal) {
-        return service.buscarHistorico(animal);
-    }
-
-    public List<HistoricoAnimal> listarHistoricos() {
-        return service.listarHistoricos();
-    }
-
-    public void atualizarStatusTratamento(Usuario usuario, Tratamento tratamento, StatusTratamento novoStatus)
+    public void atualizarStatusTratamento(Usuario usuario, Tratamento tratamento, StatusTratamento status)
             throws AcessoNegadoException, RegistroInvalidoException {
-        service.atualizarStatusTratamento(usuario, tratamento, novoStatus);
+        service.atualizarStatusTratamento(usuario, tratamento, status);
     }
 
-    public List<Tratamento> listarTratamentos(Animal animal) {
-        return service.listarTratamentos(animal);
+    public void atualizarEstadoSaude(Usuario usuario, Animal animal, String estado)
+            throws AcessoNegadoException, RegistroInvalidoException {
+        service.atualizarEstadoSaude(usuario, animal, estado);
+    }
+
+    public List<RegistroMedico> listarRegistros(Animal animal) {
+        return service.listarRegistros(animal);
     }
 
     public List<Tratamento> listarTratamentosAtivos(Animal animal) {
         return service.listarTratamentosAtivos(animal);
     }
 
-    public boolean possuiTratamentoCritico(Animal animal) {
-        return service.possuiTratamentoCritico(animal);
-    }
-
-    public List<Vacina> listarVacinasProximasVencimento() {
-        return service.listarVacinasProximasVencimento();
+    public String emitirRelatorioSaude(Usuario usuario, Animal animal)
+            throws AcessoNegadoException, RegistroInvalidoException {
+        return service.emitirRelatorioSaude(usuario, animal);
     }
 }
