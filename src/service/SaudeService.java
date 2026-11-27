@@ -47,7 +47,7 @@ public class SaudeService {
         historico.adicionarRegistro(registro);
 
         if (registro instanceof Tratamento) {
-            bloquearAdocaoSeCritico(registro.getAnimal());
+            atualizarDisponibilidade(registro.getAnimal());
         }
     }
 
@@ -60,7 +60,7 @@ public class SaudeService {
         }
 
         tratamento.setStatusTratamento(novoStatus);
-        bloquearAdocaoSeCritico(tratamento.getAnimal());
+        atualizarDisponibilidade(tratamento.getAnimal());
     }
 
     public void atualizarEstadoSaude(Usuario usuario, Animal animal, String novoEstado)
@@ -208,9 +208,15 @@ public class SaudeService {
         }
     }
 
-    private void bloquearAdocaoSeCritico(Animal animal) {
-        if (possuiTratamentoCritico(animal) && !animal.isAdotado()) {
+    private void atualizarDisponibilidade(Animal animal) {
+        if (animal.isAdotado()) {
+            return;
+        }
+
+        if (possuiTratamentoCritico(animal)) {
             animal.setStatusAdocao(Animal.StatusAdocao.EM_TRATAMENTO);
+        } else if (animal.getStatusAdocao() == Animal.StatusAdocao.EM_TRATAMENTO) {
+            animal.setStatusAdocao(Animal.StatusAdocao.DISPONIVEL);
         }
     }
 }

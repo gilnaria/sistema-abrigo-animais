@@ -96,7 +96,7 @@ public class TelaCadastroRegistro extends TelaBase {
             saude.adicionarRegistro(veterinario, registro);
             sucesso("Registro salvo no histórico de " + registro.getAnimal().getNome() + ".");
 
-            if (registro.getAnimal().getStatusAdocao() == Animal.StatusAdocao.EM_TRATAMENTO) {
+            if (registro instanceof Tratamento && ((Tratamento) registro).getStatusTratamento() == StatusTratamento.CRITICO) {
                 aviso("Animal em tratamento crítico: indisponível para adoção.");
             }
         } catch (AbrigoException e) {
