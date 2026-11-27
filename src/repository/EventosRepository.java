@@ -7,16 +7,15 @@ import model.atividades.Evento;
 public class EventosRepository {
     private final List<Evento> eventos = new ArrayList<>();
 
-    public void adicionarEventos(Evento evento){
+    public void adicionarEventos(Evento evento) {
         eventos.add(evento);
     }
-    
+
     public List<Evento> listarEventos() {
-        return new ArrayList<Evento>(eventos);
+        return new ArrayList<>(eventos);
     }
 
-    public void removerEventos(Evento evento) {
-        eventos.remove(evento);
+    public boolean removerEventos(Evento evento) {
+        return eventos.remove(evento);
     }
-
 }
