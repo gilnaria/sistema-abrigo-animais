@@ -11,6 +11,11 @@ public class Voluntario extends Usuario{
         super(nome, cpf, email, senha);
     }
 
+    @Override
+    public String getPerfil() {
+        return "Voluntário";
+    }
+
     public void adicionarAnimal(Animal animal){
         meusAnimais.add(animal);
     }

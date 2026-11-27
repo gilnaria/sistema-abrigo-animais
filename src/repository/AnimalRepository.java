@@ -15,124 +15,38 @@ public class AnimalRepository {
         return new ArrayList<>(animais);
     }
 
-    /*criar um filtro de busca com menu no view
-    *1- Buscar por nome
-    *2- Buscar por especie
-    *3- Buscar por raca
-    *4- Buscar por idade
-    *5- Buscar por porte
-    *6- Buscar por Status de Adoção
-    */
+    public Animal buscarPorCodigo(int codigo) {
+        for (Animal animal : animais) {
+            if (animal.getCodigo() == codigo) {
+                return animal;
+            }
+        }
+        return null;
+    }
 
-    //mostrar pro usuario no view se a lista resultado ta vazia
-    
-    public List<Animal> buscarPorNome(String nome){
+    public List<Animal> filtrar(String nome, String especie, String raca, Integer idade, Animal.Porte porte, Animal.StatusAdocao status) {
         List<Animal> resultado = new ArrayList<>();
 
-        for(Animal animal : animais){
-            if(animal.getNome().equalsIgnoreCase(nome)){
+        for (Animal animal : animais) {
+            boolean atende = contem(animal.getNome(), nome)
+                                    && contem(animal.getEspecie(), especie)
+                                    && contem(animal.getRaca(), raca)
+                                    && (idade == null || animal.getIdade() == idade)
+                                    && (porte == null || animal.getPorte() == porte)
+                                    && (status == null || animal.getStatusAdocao() == status);
+
+            if (atende) {
                 resultado.add(animal);
             }
         }
         return resultado;
     }
 
-    public List<Animal> buscarPorEspecie(String especie){
-        List<Animal> resultado = new ArrayList<>();
-
-        for(Animal animal : animais){
-            if(animal.getEspecie().equalsIgnoreCase(especie)){
-                resultado.add(animal);
-            }
-        }
-        return resultado;
-    }
-
-    public List<Animal> buscarPorRaca(String raca){
-        List<Animal> resultado = new ArrayList<>();
-
-        for(Animal animal : animais){
-            if(animal.getRaca().equalsIgnoreCase(raca)){
-                resultado.add(animal);
-            }
-        }
-        return resultado;
-    }
-
-    public List<Animal> buscarPorIdade(int idade){
-        List<Animal> resultado = new ArrayList<>();
-
-        for(Animal animal : animais){
-            if(animal.getIdade() == idade){
-                resultado.add(animal);
-            }
-        }
-        return resultado;
-    }
-
-    public List<Animal> buscarPorPorte(Animal.Porte porte){
-        List<Animal> resultado = new ArrayList<>();
-
-        for(Animal animal : animais){
-            if(animal.getPorte() == porte){
-                resultado.add(animal);
-            }
-        }
-        return resultado;
-    }
-
-    public List<Animal> buscarPorStatusAdocao(Animal.StatusAdocao statusAdocao){
-        List<Animal> resultado = new ArrayList<>();
-
-        for(Animal animal : animais){
-            if(animal.getStatusAdocao() == statusAdocao){
-                resultado.add(animal);
-            }
-        }
-        return resultado;
-    }
-
-    public boolean removerAnimal(Animal animal){
+    public boolean removerAnimal(Animal animal) {
         return animais.remove(animal);
     }
 
-    public boolean editarNomeAnimal(Animal animal, String novoNome){
-        if(animais.contains(animal)){
-            animal.setNome(novoNome);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean editarIdadeAnimal(Animal animal, int novaIdade){
-        if(animais.contains(animal)){
-            animal.setIdade(novaIdade);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean editarPorteAnimal(Animal animal, Animal.Porte novoPorte){
-        if(animais.contains(animal)){
-            animal.setPorte(novoPorte);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean editarEstadoSaudeAnimal(Animal animal, String novoEstadoSaude){
-        if(animais.contains(animal)){
-            animal.setEstadoSaude(novoEstadoSaude);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean editarStatusAdocaoAnimal(Animal animal, Animal.StatusAdocao novoStatusAdocao){
-        if(animais.contains(animal)){
-            animal.setStatusAdocao(novoStatusAdocao);
-            return true;
-        }
-        return false;
+    private boolean contem(String campo, String filtro) {
+        return filtro == null || filtro.isBlank() || campo.toLowerCase().contains(filtro.trim().toLowerCase());
     }
 }
