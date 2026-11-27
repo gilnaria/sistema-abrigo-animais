@@ -3,32 +3,60 @@ package model;
 import model.acesso.Voluntario;
 
 public class Candidatura {
-    public enum StatusCandidatura{
-        APROVADA,
-        PENDENTE,
-        REPROVADA
+    public enum StatusCandidatura {
+        PENDENTE("Pendente"),
+        APROVADA("Aprovada"),
+        REPROVADA("Reprovada");
+
+        private final String descricao;
+
+        StatusCandidatura(String descricao) {
+            this.descricao = descricao;
+        }
+
+        @Override
+        public String toString() {
+            return descricao;
+        }
     }
 
-    private Animal animal;
-    private Voluntario voluntario;
+    private final Animal animal;
+    private final Voluntario voluntario;
     private StatusCandidatura statusCandidatura;
 
-    public Candidatura(Voluntario voluntario, Animal animal){
+    public Candidatura(Voluntario voluntario, Animal animal) {
         this.voluntario = voluntario;
         this.animal = animal;
         this.statusCandidatura = StatusCandidatura.PENDENTE;
     }
 
-    public Voluntario getVoluntario(){
+    public Voluntario getVoluntario() {
         return voluntario;
     }
-    public Animal getAnimal(){
+
+    public Animal getAnimal() {
         return animal;
     }
-    public StatusCandidatura getStatusCandidatura(){
+
+    public StatusCandidatura getStatusCandidatura() {
         return statusCandidatura;
     }
-    public void setStatusCandidatura(StatusCandidatura novoStatusCandidatura){
-        this.statusCandidatura = novoStatusCandidatura;
+
+    public boolean isPendente() {
+        return statusCandidatura == StatusCandidatura.PENDENTE;
+    }
+
+    public void aprovar() {
+        this.statusCandidatura = StatusCandidatura.APROVADA;
+    }
+
+    public void reprovar() {
+        this.statusCandidatura = StatusCandidatura.REPROVADA;
+    }
+
+    @Override
+    public String toString() {
+        return animal.getNome() + " <- " + voluntario.getNome() + " [" + statusCandidatura + "]";
     }
 }
+

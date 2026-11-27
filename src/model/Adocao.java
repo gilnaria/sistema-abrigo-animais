@@ -1,54 +1,86 @@
 package model;
 
-import model.acesso.Voluntario;
 import java.time.LocalDate;
+import model.acesso.Voluntario;
+import util.Formato;
 
-public class Adocao {
-    private Voluntario voluntario;
-    private Animal animal;
+public class Adocao implements Exibivel {
+    private final Voluntario voluntario;
+    private final Animal animal;
     private final LocalDate dataSolicitacao;
     private StatusSolicitacao statusSolicitacao;
-    private LocalDate dataDevolucao;
     private LocalDate dataAdocao;
+    private LocalDate dataDevolucao;
 
-    public void setDataDevolucao(LocalDate dataDevolucao){
-        this.dataDevolucao = dataDevolucao;
-    }
-    public LocalDate getDataDevolucao(){
-        return dataDevolucao;
-    }
-
-    public void setDataAdocao(LocalDate dataAdocao){
-        this.dataAdocao = dataAdocao;
-    }
-    public LocalDate getDataAdocao(){
-        return dataAdocao;
-    }
-
-    public Adocao(Voluntario voluntario, Animal animal, StatusSolicitacao statusSolicitacao){
+    public Adocao(Voluntario voluntario, Animal animal) {
         this.voluntario = voluntario;
         this.animal = animal;
-        this.statusSolicitacao = statusSolicitacao;
         this.dataSolicitacao = LocalDate.now();
+        this.statusSolicitacao = StatusSolicitacao.PENDENTE;
     }
 
-    public Voluntario getVoluntario(){
+    public Voluntario getVoluntario() {
         return voluntario;
     }
 
-    public Animal getAnimal(){
+    public Animal getAnimal() {
         return animal;
     }
 
-    public StatusSolicitacao getStatusSolicitacao(){
+    public LocalDate getDataSolicitacao() {
+        return dataSolicitacao;
+    }
+
+    public StatusSolicitacao getStatusSolicitacao() {
         return statusSolicitacao;
     }
 
-    public void setStatusSolicitacao(StatusSolicitacao statusSolicitacao){
-        this.statusSolicitacao = statusSolicitacao;
+    public LocalDate getDataAdocao() {
+        return dataAdocao;
     }
 
-    public LocalDate getDataSolicitacao(){
-        return dataSolicitacao;
+    public LocalDate getDataDevolucao() {
+        return dataDevolucao;
+    }
+
+    public boolean isPendente() {
+        return statusSolicitacao == StatusSolicitacao.PENDENTE;
+    }
+
+    public boolean isConcluida() {
+        return dataAdocao != null;
+    }
+
+    public void aprovar() {
+        this.statusSolicitacao = StatusSolicitacao.APROVADA;
+        this.dataAdocao = LocalDate.now();
+    }
+
+    public void rejeitar() {
+        this.statusSolicitacao = StatusSolicitacao.REJEITADA;
+    }
+
+    public void registrarDevolucao() {
+        this.statusSolicitacao = StatusSolicitacao.DEVOLVIDA;
+        this.dataDevolucao = LocalDate.now();
+    }
+
+    @Override
+    public void exibirInfo() {
+        System.out.println("Animal: " + animal.getNome() + " (código " + animal.getCodigo() + ")");
+        System.out.println("Candidato: " + voluntario.getNome() + " | CPF: " + voluntario.getCpf());
+        System.out.println("Solicitada em: " + Formato.data(dataSolicitacao) + " | Status: " + statusSolicitacao);
+        if (dataAdocao != null) {
+            System.out.println("Adoção concluída em: " + Formato.data(dataAdocao));
+        }
+        if (dataDevolucao != null) {
+            System.out.println("Devolvido em: " + Formato.data(dataDevolucao));
+        }
+    }
+
+    @Override
+    public String toString() {
+        return animal.getNome() + " <- " + voluntario.getNome() + " [" + statusSolicitacao + "] "
+                + Formato.data(dataSolicitacao);
     }
 }

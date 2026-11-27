@@ -9,8 +9,8 @@ public abstract class Usuario {
     private String email;
     private String senha;
     private final LocalDate dataCadastro;
-    
-    public Usuario(String nome, String cpf, String email, String senha){
+
+    public Usuario(String nome, String cpf, String email, String senha) {
         this.nome = nome;
         this.cpf = Validador.somenteDigitos(cpf);
         this.email = email;
@@ -20,29 +20,35 @@ public abstract class Usuario {
 
     public abstract String getPerfil();
 
-    public boolean verificarSenha(String senha){
+    public boolean verificarSenha(String senha) {
         return this.senha != null && this.senha.equals(senha);
     }
 
-    public String getNome(){
+    public String getNome() {
         return nome;
     }
-    public String getCpf(){
+
+    public String getCpf() {
         return cpf;
     }
-    public String getEmail(){
+
+    public String getEmail() {
         return email;
     }
-    public LocalDate getDataCadastro(){
+
+    public LocalDate getDataCadastro() {
         return dataCadastro;
     }
-    public void setNome(String nome){
+
+    public void setNome(String nome) {
         this.nome = nome;
     }
-    public void setEmail(String email){
-        this.email= email;
+
+    public void setEmail(String email) {
+        this.email = email;
     }
-    public void setSenha(String senha){
+
+    public void setSenha(String senha) {
         this.senha = senha;
     }
 

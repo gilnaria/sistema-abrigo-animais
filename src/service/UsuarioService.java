@@ -1,122 +1,112 @@
 package service;
 
-import repository.UsuarioRepository;
-import service.CandidaturaService;
-import model.Candidatura;
-import model.acesso.Administrador;
-import model.acesso.Usuario;
-import exception.CpfCadastradoException;
 import exception.DadoInvalidoException;
-import exception.EmailCadastradoException;
-import exception.OperacaoInvalidaException;
-import exception.PermissaoInvalidaException;
+import exception.acesso.AcessoNegadoException;
+import exception.acesso.CadastroDuplicadoException;
+import exception.acesso.CredenciaisInvalidasException;
+import java.util.ArrayList;
 import java.util.List;
+import model.acesso.Usuario;
+import model.acesso.Voluntario;
+import repository.UsuarioRepository;
+import util.Permissoes;
+import util.Validador;
 
 public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
-    private final CandidaturaService candidaturaService;
 
-    public UsuarioService (UsuarioRepository usuarioRepository, CandidaturaService candidaturaService){
+    public UsuarioService(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
-        this.candidaturaService = candidaturaService;
     }
 
-    public void cadastrarUsuario(Usuario usuario) throws DadoInvalidoException, CpfCadastradoException, EmailCadastradoException {
-        if(usuario == null){
-            throw new DadoInvalidoException("Usuário não pode ser nulo.");
-        }
-        if(usuario.getNome() == null || usuario.getNome().isBlank()){
-            throw new DadoInvalidoException("Nome invalido!");
-        }
-        if(usuario.getCpf() == null || usuario.getCpf().length() < 11){
-            throw new DadoInvalidoException("CPF invalido!");
-        }
-        if(usuario.getEmail() == null || usuario.getEmail().isBlank()){
-            throw new DadoInvalidoException("Email invalido!");
-        }
-        if(usuarioRepository.buscarPorCpf(usuario.getCpf()) != null){
-            throw new CpfCadastradoException("Cpf já cadastrado!");
-        }
-        if(usuarioRepository.buscarPorEmail(usuario.getEmail()) != null){
-            throw new EmailCadastradoException("Email já cadastrado!");
-        } 
-        
-        usuarioRepository.adicionarUsuario(usuario);
+    public void cadastrarUsuario(Usuario usuario)
+            throws DadoInvalidoException, CadastroDuplicadoException, AcessoNegadoException {
+        registrar(usuario);
     }
 
-    public boolean autenticar(String email, String senha){
-        Usuario usuario = usuarioRepository.buscarPorEmail(email);
-
-        if(usuario == null){
-            return false;
-        }
-        if(usuario.getEmail().equalsIgnoreCase(email) && usuario.verificarSenha(senha)){
-            return true;
-        }
-
-        return false;
+    public void cadastrarPorAdministrador(Usuario administrador, Usuario novo)
+            throws DadoInvalidoException, CadastroDuplicadoException, AcessoNegadoException {
+        Permissoes.exigirAdministrador(administrador, "[ APENAS ADMINISTRADORES PODEM GERENCIAR USUÁRIOS. ]");
+        registrar(novo);
     }
 
-    public List<Usuario> listarUsuario(){
+    public Usuario autenticar(String email, String senha) throws CredenciaisInvalidasException {
+        Usuario usuario = Validador.textoValido(email) ? usuarioRepository.buscarPorEmail(email.trim()) : null;
+
+        if (usuario == null || senha == null || !usuario.verificarSenha(senha)) {
+            throw new CredenciaisInvalidasException("[ E-MAIL OU SENHA INCORRETOS. ]");
+        }
+        return usuario;
+    }
+
+    public List<Usuario> listarUsuarios(Usuario solicitante) throws AcessoNegadoException {
+        Permissoes.exigirAdministrador(solicitante, "[ APENAS ADMINISTRADORES PODEM GERENCIAR USUÁRIOS. ]");
         return usuarioRepository.listarUsuarios();
     }
 
-    public boolean removerUsuario(Usuario usuario) throws PermissaoInvalidaException{
-        if(usuario == null){
-            return false;
-        }
-        if(!(usuario instanceof Administrador)){
-            throw new PermissaoInvalidaException("Permissão negada! (somente Administradores)");
-        }
+    public List<Voluntario> listarVoluntarios() {
+        List<Voluntario> voluntarios = new ArrayList<>();
 
-        return usuarioRepository.removerUsuario(usuario);
+        for (Usuario usuario : usuarioRepository.listarUsuarios()) {
+            if (usuario instanceof Voluntario) {
+                voluntarios.add((Voluntario) usuario);
+            }
+        }
+        return voluntarios;
     }
 
-    public boolean editarUsuario(Usuario usuarioAtualizado) throws DadoInvalidoException, EmailCadastradoException{
-        if(usuarioAtualizado == null){
-            throw new DadoInvalidoException("Usuario não pode ser nulo!");
+    public void removerUsuario(Usuario solicitante, Usuario alvo) throws AcessoNegadoException, DadoInvalidoException {
+        Permissoes.exigirAdministrador(solicitante, "[ APENAS ADMINISTRADORES PODEM GERENCIAR USUÁRIOS. ]");
+
+        if (alvo == null || !usuarioRepository.removerUsuario(alvo)) {
+            throw new DadoInvalidoException("[ USUÁRIO NÃO ENCONTRADO. ]");
         }
-        if(usuarioAtualizado.getNome() == null || usuarioAtualizado.getNome().isBlank()){
-            throw new DadoInvalidoException("Nome invalido!");
-        }
-        if(usuarioAtualizado.getEmail() == null || usuarioAtualizado.getEmail().isBlank()){
-            throw new DadoInvalidoException("Email invalido!");
-        }
-
-        Usuario usuarioExistente = usuarioRepository.buscarPorCpf(usuarioAtualizado.getCpf());
-
-        if (usuarioExistente == null) {
-            throw new IllegalArgumentException("Usuario não encontrado!");
-        }
-
-        Usuario usuarioEncontrado = usuarioRepository.buscarPorEmail(usuarioAtualizado.getEmail());
-
-        if(usuarioEncontrado != null && !usuarioEncontrado.getCpf().equals(usuarioAtualizado.getCpf())){
-            throw new EmailCadastradoException ("Email já cadastrado");
-        } 
-
-        return usuarioRepository.editarUsuario(usuarioAtualizado);
     }
 
-    public void aprovarCandidatura(Usuario usuario, Candidatura candidatura) throws DadoInvalidoException, PermissaoInvalidaException, OperacaoInvalidaException{
-        if(usuario == null){
-            throw new DadoInvalidoException("Usuario não pode ser nulo");
+    public void editarDados(Usuario solicitante, Usuario alvo, String novoNome, String novoEmail)
+            throws AcessoNegadoException, DadoInvalidoException, CadastroDuplicadoException {
+        Permissoes.exigirAdministrador(solicitante, "[ APENAS ADMINISTRADORES PODEM GERENCIAR USUÁRIOS. ]");
+
+        if (alvo == null) {
+            throw new DadoInvalidoException("[ USUÁRIO NÃO ENCONTRADO. ]");
         }
-        if(!(usuario instanceof Administrador)){
-            throw new PermissaoInvalidaException ("Permissão invalida! (somente administradores)");
+        if (!Validador.textoValido(novoNome)) {
+            throw new DadoInvalidoException("[ NOME NÃO PODE SER VAZIO. ]");
+        }
+        if (!Validador.emailValido(novoEmail)) {
+            throw new DadoInvalidoException("[ E-MAIL INVÁLIDO. ]");
         }
 
-        candidaturaService.aprovarCandidatura(candidatura);
+        Usuario comEmail = usuarioRepository.buscarPorEmail(novoEmail.trim());
+
+        if (comEmail != null && !comEmail.equals(alvo)) {
+            throw new CadastroDuplicadoException("[ E-MAIL JÁ CADASTRADO. ]");
+        }
+
+        alvo.setNome(novoNome.trim());
+        alvo.setEmail(novoEmail.trim());
     }
 
-    public void rejeitarCandidatura(Usuario usuario, Candidatura candidatura) throws DadoInvalidoException, PermissaoInvalidaException, OperacaoInvalidaException{
-        if(usuario == null){
-            throw new DadoInvalidoException("Usuario não pode ser nulo");
+    private void registrar(Usuario usuario) throws DadoInvalidoException, CadastroDuplicadoException {
+        if (usuario == null) {
+            throw new DadoInvalidoException("[ USUÁRIO NÃO PODE SER NULO. ]");
         }
-        if(!(usuario instanceof Administrador)){
-            throw new PermissaoInvalidaException ("Permissão invalida! (somente administradores)");
+        if (!Validador.textoValido(usuario.getNome())) {
+            throw new DadoInvalidoException("[ NOME NÃO PODE SER VAZIO. ]");
+        }
+        if (!Validador.cpfValido(usuario.getCpf())) {
+            throw new DadoInvalidoException("[ CPF DEVE TER 11 DÍGITOS. ]");
+        }
+        if (!Validador.emailValido(usuario.getEmail())) {
+            throw new DadoInvalidoException("[ E-MAIL INVÁLIDO. ]");
+        }
+        if (usuarioRepository.buscarPorCpf(usuario.getCpf()) != null) {
+            throw new CadastroDuplicadoException("[ CPF JÁ CADASTRADO. ]");
+        }
+        if (usuarioRepository.buscarPorEmail(usuario.getEmail()) != null) {
+            throw new CadastroDuplicadoException("[ E-MAIL JÁ CADASTRADO. ]");
         }
 
-        candidaturaService.rejeitarCandidatura(candidatura);
+        usuarioRepository.adicionarUsuario(usuario);
     }
 }
