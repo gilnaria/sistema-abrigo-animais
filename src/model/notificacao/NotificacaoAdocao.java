@@ -16,7 +16,18 @@ public class NotificacaoAdocao implements Notificavel {
 
     @Override
     public String gerarMensagemNotificacao() {
-        return "Sua solicitação de adoção de " + adocao.getAnimal().getNome() + " foi "
-        + adocao.getStatusSolicitacao().toString().toLowerCase() + ".";
+        String animal = adocao.getAnimal().getNome();
+        String candidato = adocao.getVoluntario().getNome();
+
+        switch (adocao.getStatusSolicitacao()) {
+            case APROVADA:
+                return "A adoção de " + animal + " por " + candidato + " foi aprovada.";
+            case REJEITADA:
+                return "A solicitação de adoção de " + animal + " por " + candidato + " foi rejeitada.";
+            case DEVOLVIDA:
+                return "O animal " + animal + " foi devolvido por " + candidato + " e voltou ao abrigo.";
+            default:
+                return "Nova solicitação de adoção de " + animal + " por " + candidato + ".";
+        }
     }
 }

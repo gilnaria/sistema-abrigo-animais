@@ -16,6 +16,6 @@ public class NotificacaoNovoAnimal implements Notificavel {
 
     @Override
     public String gerarMensagemNotificacao() {
-        return "Novo animal disponível para adoção: " + animal.getNome() + ".";
+        return "Novo animal cadastrado no abrigo: " + animal.getNome() + " (" + animal.getEspecie() + ").";
     }
 }

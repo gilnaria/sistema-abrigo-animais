@@ -1,14 +1,15 @@
 package model.notificacao;
 
-import java.time.format.DateTimeFormatter;
-
 import model.atividades.Evento;
+import util.Formato;
 
 public class NotificacaoEvento implements Notificavel {
     private final Evento evento;
+    private final boolean lembrete;
 
-    public NotificacaoEvento(Evento evento) {
+    public NotificacaoEvento(Evento evento, boolean lembrete) {
         this.evento = evento;
+        this.lembrete = lembrete;
     }
 
     @Override
@@ -18,7 +19,11 @@ public class NotificacaoEvento implements Notificavel {
 
     @Override
     public String gerarMensagemNotificacao() {
-        return "Novo evento cadastrado: " + evento.getNomeEvento() + " em "
-        + evento.getDataEvento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + ".";
+        String data = Formato.data(evento.getDataEvento());
+
+        if (lembrete) {
+            return "Lembrete: " + evento.getNomeEvento() + " acontece em " + data + ".";
+        }
+        return "Novo evento cadastrado: " + evento.getNomeEvento() + " em " + data + ".";
     }
 }
