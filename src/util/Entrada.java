@@ -1,14 +1,28 @@
 package util;
 
+import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public final class Entrada {
-    private static final Scanner SCANNER = new Scanner(System.in);
+    private static final Scanner SCANNER = new Scanner(System.in, charsetDoConsole());
 
     private Entrada() {
+    }
+
+    private static Charset charsetDoConsole() {
+        String nome = System.getProperty("stdin.encoding", System.getProperty("sun.stdin.encoding"));
+
+        if (nome != null) {
+            try {
+                return Charset.forName(nome);
+            } catch (IllegalArgumentException e) {
+                return Charset.defaultCharset();
+            }
+        }
+        return Charset.defaultCharset();
     }
 
     public static String lerTexto(String rotulo) {
@@ -116,4 +130,3 @@ public final class Entrada {
         SCANNER.nextLine();
     }
 }
-
