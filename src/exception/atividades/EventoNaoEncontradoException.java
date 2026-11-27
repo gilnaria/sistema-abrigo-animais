@@ -1,6 +1,8 @@
 package exception.atividades;
 
-public class EventoNaoEncontradoException extends Exception {
+import exception.AbrigoException;
+
+public class EventoNaoEncontradoException extends AbrigoException {
     
     public EventoNaoEncontradoException(String msg){
         super(msg);

@@ -1,6 +1,8 @@
 package exception.atividades;
 
-public class InscricaoNaoEncontradaException extends Exception {
+import exception.AbrigoException;
+
+public class InscricaoNaoEncontradaException extends AbrigoException {
     public InscricaoNaoEncontradaException(String msg){
         super(msg);
     }

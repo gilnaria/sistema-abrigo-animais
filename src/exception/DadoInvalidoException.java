@@ -1,6 +1,6 @@
 package exception;
 
-public class DadoInvalidoException extends Exception {
+public class DadoInvalidoException extends AbrigoException {
     
     public DadoInvalidoException(String msg){
         super(msg);
