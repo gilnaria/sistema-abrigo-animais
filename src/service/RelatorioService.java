@@ -1,200 +1,133 @@
 package service;
- 
+
+import exception.acesso.AcessoNegadoException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
- 
-import exception.PermissaoInvalidaException;
 import model.Adocao;
 import model.Animal;
-import model.acesso.Administrador;
 import model.acesso.Usuario;
 import model.acesso.Voluntario;
 import model.atividades.Inscricao;
-import model.saude.HistoricoAnimal;
-import model.saude.RegistroMedico;
-import model.saude.StatusTratamento;
-import model.saude.Tratamento;
+import repository.AdocaoRepository;
+import repository.AnimalRepository;
 import repository.InscricaoRepository;
- 
+import util.Permissoes;
+
 public class RelatorioService {
-    private final AnimalService animalService;
-    private final AdocaoService adocaoService;
-    private final UsuarioService usuarioService;
-    private final SaudeService saudeService;
+    private static final String MSG_SO_ADMIN = "[ APENAS ADMINISTRADORES PODEM ACESSAR OS RELATÓRIOS. ]";
+
+    private final AnimalRepository animalRepository;
+    private final AdocaoRepository adocaoRepository;
     private final InscricaoRepository inscricaoRepository;
- 
-    public RelatorioService(AnimalService animalService, AdocaoService adocaoService, UsuarioService usuarioService,
-            SaudeService saudeService, InscricaoRepository inscricaoRepository) {
-        this.animalService = animalService;
-        this.adocaoService = adocaoService;
-        this.usuarioService = usuarioService;
-        this.saudeService = saudeService;
+    private final SaudeService saudeService;
+
+    public RelatorioService(AnimalRepository animalRepository, AdocaoRepository adocaoRepository,
+            InscricaoRepository inscricaoRepository, SaudeService saudeService) {
+        this.animalRepository = animalRepository;
+        this.adocaoRepository = adocaoRepository;
         this.inscricaoRepository = inscricaoRepository;
+        this.saudeService = saudeService;
     }
- 
-    // Quantidade de animais resgatados (todos os animais cadastrados no abrigo)
-    public int quantidadeAnimaisResgatados(Usuario usuario) throws PermissaoInvalidaException {
-        exigirAdministrador(usuario);
- 
-        return animalService.listarAnimais().size();
+
+    public int totalAnimaisResgatados(Usuario usuario) throws AcessoNegadoException {
+        Permissoes.exigirAdministrador(usuario, MSG_SO_ADMIN);
+        return animalRepository.listarAnimais().size();
     }
- 
-    // Quantidade de adoções realizadas (solicitações aprovadas, inclusive as que depois foram devolvidas)
-    public int quantidadeAdocoesRealizadas(Usuario usuario) throws PermissaoInvalidaException {
-        exigirAdministrador(usuario);
- 
-        return adocaoService.historicoAdocao().size();
+
+    public int totalAdocoesRealizadas(Usuario usuario) throws AcessoNegadoException {
+        Permissoes.exigirAdministrador(usuario, MSG_SO_ADMIN);
+        return adocoesConcluidas().size();
     }
- 
-    // Espécies mais resgatadas, da mais frequente para a menos frequente
-    public Map<String, Integer> especiesMaisResgatadas(Usuario usuario) throws PermissaoInvalidaException {
-        exigirAdministrador(usuario);
- 
-        Map<String, Integer> contagem = new HashMap<>();
-        Map<String, String> nomeOriginal = new HashMap<>();
- 
-        for (Animal animal : animalService.listarAnimais()) {
-            String chave = animal.getEspecie().trim().toLowerCase();
- 
-            nomeOriginal.putIfAbsent(chave, animal.getEspecie().trim());
-            contagem.merge(chave, 1, Integer::sum);
-        }
- 
-        List<String> chaves = new ArrayList<>(contagem.keySet());
- 
-        chaves.sort((a, b) -> {
-            int porQuantidade = Integer.compare(contagem.get(b), contagem.get(a));
- 
-            if (porQuantidade != 0) {
-                return porQuantidade;
-            }
- 
-            return a.compareTo(b);
-        });
- 
-        Map<String, Integer> ranking = new LinkedHashMap<>();
- 
-        for (String chave : chaves) {
-            ranking.put(nomeOriginal.get(chave), contagem.get(chave));
-        }
- 
-        return ranking;
-    }
- 
-    // Taxa de adoção mensal (%) = adoções aprovadas no mês / animais resgatados até o fim do mês * 100
-    public Map<YearMonth, Double> taxaAdocaoMensal(Usuario usuario) throws PermissaoInvalidaException {
-        exigirAdministrador(usuario);
- 
-        Map<YearMonth, Double> taxas = new TreeMap<>();
-        List<Animal> animais = animalService.listarAnimais();
- 
-        if (animais.isEmpty()) {
-            return taxas;
-        }
- 
-        YearMonth primeiroMes = YearMonth.from(animais.get(0).getDataResgate());
- 
-        for (Animal animal : animais) {
-            YearMonth mesResgate = YearMonth.from(animal.getDataResgate());
- 
-            if (mesResgate.isBefore(primeiroMes)) {
-                primeiroMes = mesResgate;
+
+    public List<String> especiesMaisResgatadas(Usuario usuario) throws AcessoNegadoException {
+        Permissoes.exigirAdministrador(usuario, MSG_SO_ADMIN);
+        List<String> especies = new ArrayList<>();
+        List<Integer> quantidades = new ArrayList<>();
+
+        for (Animal animal : animalRepository.listarAnimais()) {
+            String especie = animal.getEspecie().trim().toLowerCase();
+            int posicao = especies.indexOf(especie);
+
+            if (posicao == -1) {
+                especies.add(especie);
+                quantidades.add(1);
+            } else {
+                quantidades.set(posicao, quantidades.get(posicao) + 1);
             }
         }
- 
-        List<Adocao> adocoes = adocaoService.historicoAdocao();
-        YearMonth mesAtual = YearMonth.now();
- 
-        for (YearMonth mes = primeiroMes; !mes.isAfter(mesAtual); mes = mes.plusMonths(1)) {
-            int adocoesNoMes = 0;
-            int resgatadosAteMes = 0;
- 
-            for (Adocao adocao : adocoes) {
-                LocalDate data = adocao.getDataAdocao();
- 
-                if (data != null && YearMonth.from(data).equals(mes)) {
-                    adocoesNoMes++;
-                }
-            }
- 
-            for (Animal animal : animais) {
-                if (!YearMonth.from(animal.getDataResgate()).isAfter(mes)) {
-                    resgatadosAteMes++;
-                }
-            }
- 
-            double taxa = resgatadosAteMes == 0 ? 0.0 : (adocoesNoMes * 100.0) / resgatadosAteMes;
- 
-            taxas.put(mes, taxa);
-        }
- 
-        return taxas;
-    }
- 
-    // Voluntário ativo = tem animal sob sua responsabilidade OU está inscrito em algum evento
-    public int quantidadeVoluntariosAtivos(Usuario usuario) throws PermissaoInvalidaException {
-        exigirAdministrador(usuario);
- 
-        int ativos = 0;
- 
-        for (Usuario cadastrado : usuarioService.listarUsuario()) {
-            if (cadastrado instanceof Voluntario) {
-                Voluntario voluntario = (Voluntario) cadastrado;
- 
-                if (estaAtivo(voluntario)) {
-                    ativos++;
+
+        // ordena da espécie mais resgatada para a menos resgatada
+        for (int i = 0; i < especies.size(); i++) {
+            for (int j = 0; j < especies.size() - 1 - i; j++) {
+                if (quantidades.get(j) < quantidades.get(j + 1)) {
+                    int quantidadeTemp = quantidades.get(j);
+                    quantidades.set(j, quantidades.get(j + 1));
+                    quantidades.set(j + 1, quantidadeTemp);
+
+                    String especieTemp = especies.get(j);
+                    especies.set(j, especies.get(j + 1));
+                    especies.set(j + 1, especieTemp);
                 }
             }
         }
- 
-        return ativos;
+
+        List<String> resultado = new ArrayList<>();
+        for (int i = 0; i < especies.size(); i++) {
+            resultado.add(especies.get(i) + ": " + quantidades.get(i));
+        }
+        return resultado;
     }
- 
-    // Animais em tratamento = tratamentos cujo status não é CONCLUIDO
-    public List<Tratamento> tratamentosEmAndamento(Usuario usuario) throws PermissaoInvalidaException {
-        exigirAdministrador(usuario);
- 
-        List<Tratamento> emTratamento = new ArrayList<>();
- 
-        for (HistoricoAnimal historico : saudeService.listarHistoricos()) {
-            for (RegistroMedico registro : historico.getRegistros()) {
-                if (registro instanceof Tratamento) {
-                    Tratamento tratamento = (Tratamento) registro;
- 
-                    if (tratamento.getStatusTratamento() != StatusTratamento.CONCLUIDO) {
-                        emTratamento.add(tratamento);
-                    }
-                }
+
+    public double taxaAdocaoMensal(Usuario usuario, YearMonth mes) throws AcessoNegadoException {
+        Permissoes.exigirAdministrador(usuario, MSG_SO_ADMIN);
+        LocalDate fimDoMes = mes.atEndOfMonth();
+
+        int adocoesNoMes = 0;
+        for (Adocao adocao : adocoesConcluidas()) {
+            if (YearMonth.from(adocao.getDataAdocao()).equals(mes)) {
+                adocoesNoMes++;
             }
         }
- 
-        return emTratamento;
-    }
- 
-    private boolean estaAtivo(Voluntario voluntario) {
-        if (!voluntario.listarMeusAnimais().isEmpty()) {
-            return true;
+
+        int resgatadosAteOMes = 0;
+        for (Animal animal : animalRepository.listarAnimais()) {
+            if (!animal.getDataResgate().isAfter(fimDoMes)) {
+                resgatadosAteOMes++;
+            }
         }
- 
+
+        return resgatadosAteOMes == 0 ? 0.0 : (adocoesNoMes * 100.0) / resgatadosAteOMes;
+    }
+
+    public int voluntariosAtivos(Usuario usuario) throws AcessoNegadoException {
+        Permissoes.exigirAdministrador(usuario, MSG_SO_ADMIN);
+        List<Voluntario> ativos = new ArrayList<>();
+
         for (Inscricao inscricao : inscricaoRepository.listarInscricoes()) {
-            if (inscricao.getVoluntario().equals(voluntario)) {
-                return true;
+            if (!ativos.contains(inscricao.getVoluntario())) {
+                ativos.add(inscricao.getVoluntario());
             }
         }
- 
-        return false;
+        return ativos.size();
     }
- 
-    private void exigirAdministrador(Usuario usuario) throws PermissaoInvalidaException {
-        if (!(usuario instanceof Administrador)) {
-            throw new PermissaoInvalidaException("Permissão negada! (somente administradores)");
+
+    public List<Animal> animaisEmTratamento(Usuario usuario) throws AcessoNegadoException {
+        Permissoes.exigirAdministradorOuVeterinario(usuario,
+                "[ APENAS ADMINISTRADORES E VETERINÁRIOS PODEM VER ANIMAIS EM TRATAMENTO. ]");
+        return saudeService.listarAnimaisEmTratamento();
+    }
+
+    private List<Adocao> adocoesConcluidas() {
+        List<Adocao> concluidas = new ArrayList<>();
+
+        for (Adocao adocao : adocaoRepository.listarSolicitacoes()) {
+            if (adocao.isConcluida()) {
+                concluidas.add(adocao);
+            }
         }
+        return concluidas;
     }
 }
  
