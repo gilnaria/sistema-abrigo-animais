@@ -37,7 +37,6 @@ public class MenuPrincipal extends TelaBase {
                     "1 - Fazer login",
                     "2 - Realizar cadastro",
                     "3 - Visualizar animais disponíveis",
-                    "4 - Sobre o sistema",
                     "0 - Encerrar o programa");
             opcao = Entrada.lerInt("Opção");
 
@@ -50,9 +49,6 @@ public class MenuPrincipal extends TelaBase {
                     break;
                 case 3:
                     telaAnimais.exibirDisponiveis();
-                    break;
-                case 4:
-                    sobre();
                     break;
                 case 0:
                     sucesso("Sistema encerrado.");
@@ -110,12 +106,4 @@ public class MenuPrincipal extends TelaBase {
         }
     }
 
-    private void sobre() {
-        titulo("SOBRE O SISTEMA");
-        System.out.println("Plataforma para ONGs e instituições de proteção animal organizarem");
-        System.out.println("resgates, saúde dos animais, adoções, voluntários e atividades.");
-        System.out.println();
-        System.out.println("Perfis: Voluntário, Veterinário e Administrador do Abrigo.");
-        System.out.println("Trabalho Final de POO - UFC Crateús (CRT0007).");
-    }
 }
